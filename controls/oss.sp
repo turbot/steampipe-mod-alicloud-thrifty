@@ -30,7 +30,7 @@ control "oss_bucket_without_lifecycle_policy" {
       case
         when lifecycle_rules is null then title || ' has no lifecycle policy.'
         when lifecycle_rules @> '[{"Status":"Enabled"}]' then title || ' has lifecycle policy.'
-        else title || ' has lifecycle policy but disabled.'
+        else title || ' has lifecycle policy, but disabled.'
       end as reason,
       region,
       account_id
