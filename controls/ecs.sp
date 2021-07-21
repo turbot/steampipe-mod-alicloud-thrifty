@@ -11,6 +11,7 @@ benchmark "ecs" {
   tags          = local.ecs_common_tags
   children = [
     control.ecs_disk_attached_stopped_instance,
+    control.ecs_disk_high_iops,
     control.ecs_disk_large,
     control.ecs_disk_unattached,
     control.ecs_instance_large,
@@ -173,5 +174,33 @@ control "ecs_snapshot_age_90" {
 
   tags = merge(local.ecs_common_tags, {
     class = "unused"
+  })
+}
+
+control "ecs_disk_high_iops" {
+  title         = "Which ECS disks are allocated for > 32k IOPS?"
+  description   = "High IOPS PL1, PL2 and PL3 disks are costly and usage should be reviewed."
+  severity      = "low"
+
+  sql = <<-EOT
+    select
+      arn as resource,
+      case
+        when category <> 'cloud_essd' then 'skip'
+        when iops > 32000 then 'alarm'
+        else 'ok'
+      end as status,
+      case
+        when category <> 'cloud_essd' then title || ' is of type ' || category || '.'
+        else title || ' with performance category ' || performance_level || ' has ' || iops || ' iops.'
+      end as reason,
+      region,
+      account_id
+    from
+      alicloud_ecs_disk;
+  EOT
+
+  tags = merge(local.ecs_common_tags, {
+    class = "deprecated"
   })
 }
