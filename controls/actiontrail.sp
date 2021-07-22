@@ -16,7 +16,7 @@ benchmark "actiontrail" {
 }
 
 control "multiple_global_trails" {
-  title = "Redundant enabled global ActionTrail trails should be avoided"
+  title = "Redundant enabled global ActionTrail trails should be reviewed"
   description   = "Your actiontrail in each account is charged based on the billing policies of an Object Storage Service (OSS) bucket or a Log Service Logstore."
   severity      = "low"
 
