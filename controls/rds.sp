@@ -45,7 +45,6 @@ control "rds_db_instances_long_running" {
 control "rds_db_instances_low_connection_count" {
   title         = "RDS DBs with fewer than 2 connections per day should be reviewed"
   description   = "These databases have very little usage in last 30 days. Should this instance be shutdown when not in use?"
-  sql           = query.low_connections_rds_metrics.sql
   severity      = "high"
 
   sql = <<-EOT

@@ -243,7 +243,7 @@ control "ecs_instance_with_low_utilization" {
       left join ec2_instance_utilization as u on u.instance_id = i.instance_id;
   EOT
 
-  tags = merge(local.ec2_common_tags, {
+  tags = merge(local.ecs_common_tags, {
     class = "unused"
   })
 }

@@ -4,10 +4,10 @@ locals {
   })
 }
 
-benchmark "action_trail" {
+benchmark "actiontrail" {
   title         = "ActionTrail Checks"
   description   = "Thrifty developers know that multiple active ActionTrail Trails can add significant costs. Be thrifty and eliminate the extra trails. One trail to rule them all."
-  documentation = file("./controls/docs/action_trail.md")
+  documentation = file("./controls/docs/actiontrail.md")
   tags          = local.actiontrail_common_tags
   children = [
     control.multiple_global_trails,
