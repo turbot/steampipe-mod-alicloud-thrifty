@@ -15,6 +15,7 @@ benchmark "ecs" {
     control.ecs_disk_large,
     control.ecs_disk_unattached,
     control.ecs_instance_large,
+    control.ecs_instance_with_low_utilization,
     control.ecs_instance_long_running,
     control.ecs_snapshot_age_90
   ]
@@ -202,5 +203,47 @@ control "ecs_disk_high_iops" {
 
   tags = merge(local.ecs_common_tags, {
     class = "deprecated"
+  })
+}
+
+control "ecs_instance_with_low_utilization" {
+  title         = "ECS instances with very low CPU utilization should be reviewed"
+  description   = "Resize or eliminate under utilized instances."
+  severity      = "low"
+
+  sql = <<-EOT
+    with ec2_instance_utilization as (
+      select 
+        instance_id,
+        round(cast(sum(maximum)/count(maximum) as numeric), 1) as avg_max,
+        count(maximum) days
+      from 
+        alicloud_ecs_instance_metric_cpu_utilization_daily
+      where
+        date_part('day', now() - timestamp) <=30
+      group by
+        instance_id
+    )
+    select
+      arn as resource,
+      case
+        when avg_max is null then 'error'
+        when avg_max < 20 then 'alarm'
+        when avg_max < 35 then 'info'
+        else 'ok'
+      end as status,
+      case
+        when avg_max is null then 'Cloud monitor metrics not available for ' || title || '.'
+        else title || ' is averaging ' || avg_max || '% max utilization over the last ' || days || ' days.'
+      end as reason,
+      region,
+      account_id
+    from
+      alicloud_ecs_instance as i
+      left join ec2_instance_utilization as u on u.instance_id = i.instance_id;
+  EOT
+
+  tags = merge(local.ec2_common_tags, {
+    class = "unused"
   })
 }
