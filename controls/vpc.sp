@@ -10,13 +10,13 @@ benchmark "vpc" {
   documentation = file("./controls/docs/vpc.md")
   tags          = local.vpc_common_tags
   children = [
-    control.unused_vpc_nat_gateways,
+    control.vpc_nat_gateway_unused,
     control.vpc_eip_unattached
   ]
 }
 
 control "vpc_eip_unattached" {
-  title       = "Unattached external IP addresses should be removed"
+  title       = "Unattached external IP addresses should be released"
   description = "Unattached external IPs cost money and should be released."
   severity    = "low"
 
@@ -42,9 +42,10 @@ control "vpc_eip_unattached" {
   })
 }
 
-control "unused_vpc_nat_gateways" {
-  title         = "Unused NAT gateways should be reviewed"
-  description   = "NAT Gateway is charged on an hourly basis once it is provisioned and available, check why these are available but not used."
+control "vpc_nat_gateway_unused" {
+  title       = "Unused NAT gateways should be deleted"
+  description = "NAT gateways are charged on an hourly basis once provisioned and available. Unused NAT gateways should be deleted if not used."
+  severity    = "low"
 
   sql = <<-EOT
     with instance_data as (
@@ -78,7 +79,6 @@ control "unused_vpc_nat_gateways" {
       left join instance_data as i on nat_gateway_private_info ->> 'VswitchId' = i.vswitch_id;
   EOT
 
-  severity      = "low"
   tags = merge(local.vpc_common_tags, {
     class = "unused"
   })

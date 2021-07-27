@@ -1,4 +1,5 @@
 locals {
+
   oss_common_tags = merge(local.thrifty_common_tags, {
     service = "oss"
   })
@@ -15,8 +16,8 @@ benchmark "oss" {
 }
 
 control "oss_bucket_without_lifecycle_policy" {
-  title         = "OSS buckets should have lifecycle policies"
-  description   = "Buckets should have a lifecycle policy associated for data retention."
+  title       = "OSS buckets should have lifecycle policies"
+  description = "Buckets should have a lifecycle policy associated for data retention."
   severity    = "low"
 
   sql = <<-EOT
@@ -30,7 +31,7 @@ control "oss_bucket_without_lifecycle_policy" {
       case
         when lifecycle_rules is null then title || ' has no lifecycle policy.'
         when lifecycle_rules @> '[{"Status":"Enabled"}]' then title || ' has lifecycle policy.'
-        else title || ' has lifecycle policy, but disabled.'
+        else title || ' has disabled lifecycle policy.'
       end as reason,
       region,
       account_id

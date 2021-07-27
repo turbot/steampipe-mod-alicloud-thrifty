@@ -1,6 +1,6 @@
 ## Thrifty RDS Benchmark
 
-Thrifty developers checks long running RDS databases should have billing type as 'Subscription'.
+Thrifty developers check long running RDS database instances have the correct billing type and have recent connections.
 
 ### Default Thresholds
 

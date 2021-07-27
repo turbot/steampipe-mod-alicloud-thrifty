@@ -165,7 +165,7 @@ control "ecs_snapshot_age_90" {
         when creation_time > current_timestamp - interval '90 days' then 'ok'
         else 'alarm'
       end as status,
-      snapshot_id || ' created at ' || creation_time || '(' || date_part('day', now() - creation_time) || ' days).'
+      snapshot_id || ' created at ' || creation_time || ' (' || date_part('day', now() - creation_time) || ' days).'
       as reason,
       region,
       account_id
@@ -179,9 +179,9 @@ control "ecs_snapshot_age_90" {
 }
 
 control "ecs_disk_high_iops" {
-  title         = "Which ECS disks are allocated for > 32k IOPS?"
-  description   = "High IOPS PL1, PL2 and PL3 disks are costly and usage should be reviewed."
-  severity      = "low"
+  title       = "ECS disks with high IOPS should be reviewed"
+  description = "High IOPS PL1, PL2 and PL3 disks are costly and usage should be reviewed."
+  severity    = "low"
 
   sql = <<-EOT
     select
@@ -207,17 +207,17 @@ control "ecs_disk_high_iops" {
 }
 
 control "ecs_instance_with_low_utilization" {
-  title         = "ECS instances with very low CPU utilization should be reviewed"
-  description   = "Resize or eliminate under utilized instances."
-  severity      = "low"
+  title       = "ECS instances with very low CPU utilization should be reviewed"
+  description = "Resize or eliminate under utilized instances."
+  severity    = "low"
 
   sql = <<-EOT
     with ec2_instance_utilization as (
-      select 
+      select
         instance_id,
         round(cast(sum(maximum)/count(maximum) as numeric), 1) as avg_max,
         count(maximum) days
-      from 
+      from
         alicloud_ecs_instance_metric_cpu_utilization_daily
       where
         date_part('day', now() - timestamp) <=30
