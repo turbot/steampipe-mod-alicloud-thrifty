@@ -10,6 +10,6 @@ mod "alicloud_thrifty" {
   opengraph {
     title       = "Thrifty mod for Alibaba Cloud"
     description = "Are you a Thrifty Alibaba Cloud dev? This Steampipe mod checks your Alibaba Cloud account(s) for unused and under-utilized resources."
-    #image       = "/images/mods/turbot/alicloud-thrifty-social-graphic.png"
+    image       = "/images/mods/turbot/alicloud-thrifty-social-graphic.png"
   }
 }
