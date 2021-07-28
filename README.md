@@ -30,7 +30,7 @@ Run all benchmarks:
 steampipe check all
 ```
 
-![image](https://github.com/turbot/steampipe-mod-alicloud-thrifty/blob/main/docs/thrifty-output.png?raw=true)
+![image](https://github.com/turbot/steampipe-mod-alicloud-thrifty/blob/main/docs/alicloud-thrifty-console.png?raw=true)
 
 Your can also run a specific controls:
 ```shell
