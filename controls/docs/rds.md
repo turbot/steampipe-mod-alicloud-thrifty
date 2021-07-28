@@ -4,4 +4,5 @@ Thrifty developers check long running RDS database instances have the correct bi
 
 ### Default Thresholds
 
-- RDS database age threshold (90 days)
+- [Long running RDS database instance threshold (90 Days)](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/controls/control.rds_db_instance_long_running)
+- [Low connection RDS database instance threshold (2 Max connections per day)](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/controls/control.rds_db_instance_low_connection_count)
