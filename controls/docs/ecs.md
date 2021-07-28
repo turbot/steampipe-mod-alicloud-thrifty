@@ -9,4 +9,4 @@ Thrifty developers eliminate their unused and under-utilized ECS instances. This
 - [Long running ECS instance threshold (90 days)](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/controls/control.ecs_instance_long_running)
 - [Low utilization ECS instance threshold (< 35%)](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/controls/control.ecs_instance_with_low_utilization)
 - [High IOPS ECS disk threshold (32,000 IOPS)](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/controls/control.ecs_disk_high_iops)
-- [Instance types that are too big (> 12xlarge)](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/controls/control.ecs_instance_large)
+- [ECS instance types that are too big (> 12xlarge)](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/controls/control.ecs_instance_large)
