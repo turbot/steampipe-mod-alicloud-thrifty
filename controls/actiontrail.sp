@@ -6,7 +6,7 @@ locals {
 
 benchmark "actiontrail" {
   title         = "ActionTrail Checks"
-  description   = "Thrifty developers know that multiple active ActionTrail Trails can add significant costs. Be thrifty and eliminate the extra trails. One trail to rule them all."
+  description   = "Thrifty developers know that multiple active ActionTrail trails can add significant costs. Be thrifty and eliminate the extra trails. One trail to rule them all."
   documentation = file("./controls/docs/actiontrail.md")
   tags          = local.actiontrail_common_tags
   children = [
