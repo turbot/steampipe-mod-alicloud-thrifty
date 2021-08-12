@@ -6,7 +6,7 @@ locals {
 
 benchmark "rds" {
   title         = "RDS Checks"
-  description   = "Thrifty developers checks long running rds databases should have billing type as 'Subscription' instead of 'Pay-as-you-go'."
+  description   = "Thrifty developers check long running rds databases should have billing type as 'Subscription' instead of 'Pay-as-you-go'."
   documentation = file("./controls/docs/rds.md")
   tags          = local.rds_common_tags
   children = [
@@ -44,7 +44,7 @@ control "rds_db_instance_long_running" {
 
 control "rds_db_instance_low_connection_count" {
   title       = "RDS DB instances with fewer than 2 connections per day should be reviewed"
-  description = "These databases have very little usage in last 30 days and should be shutdown when not in use."
+  description = "These databases have had very little usage in the last 30 days and should be shut down when not in use."
   severity    = "high"
 
   sql = <<-EOT

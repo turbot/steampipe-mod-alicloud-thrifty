@@ -22,8 +22,8 @@ benchmark "ecs" {
 }
 
 control "ecs_disk_attached_stopped_instance" {
-  title       = "Disks attached to stopped instance should be reviewed"
-  description = "Instances that are stopped may no longer need any disks attached."
+  title       = "Disks attached to stopped instances should be reviewed"
+  description = "Instances that are stopped may no longer need any attached disks."
   severity    = "low"
 
   sql = <<-EOT
@@ -76,7 +76,7 @@ control "ecs_disk_large" {
 }
 
 control "ecs_disk_unattached" {
-  title       = "Unused disks should be removed"
+  title       = "Unattached disks should be removed"
   description = "Unattached disks are charged by Alicloud, they should be removed unless there is a business need to retain them."
   severity    = "low"
 
@@ -129,7 +129,7 @@ control "ecs_instance_large" {
 
 control "ecs_instance_long_running" {
   title       = "Long running instances should be reviewed"
-  description = "Instances should ideally be ephemeral and rehydrated frequently, check why these instances have been running for so long."
+  description = "Instances should ideally be ephemeral and rehydrated frequently. Check why these instances have been running for so long."
   severity    = "low"
 
   sql = <<-EOT
@@ -180,7 +180,7 @@ control "ecs_snapshot_age_90" {
 
 control "ecs_disk_high_iops" {
   title       = "ECS disks with high IOPS should be reviewed"
-  description = "High IOPS PL1, PL2 and PL3 disks are costly and usage should be reviewed."
+  description = "High IOPS PL1, PL2 and PL3 disks are costly and their usage should be reviewed."
   severity    = "low"
 
   sql = <<-EOT
@@ -208,7 +208,7 @@ control "ecs_disk_high_iops" {
 
 control "ecs_instance_with_low_utilization" {
   title       = "ECS instances with very low CPU utilization should be reviewed"
-  description = "Resize or eliminate under utilized instances."
+  description = "Resize or eliminate underutilized instances."
   severity    = "low"
 
   sql = <<-EOT
