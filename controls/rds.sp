@@ -1,3 +1,18 @@
+variable "rds_db_instance_age_max_days" {
+  type        = number
+  description = "The maximum number of days a DB instance can be running for."
+}
+
+variable "rds_db_instance_age_warning_days" {
+  type        = number
+  description = "The maximum number of days set as warning threshold for a DB instance."
+}
+
+variable "rds_db_instance_min_connection_per_day" {
+  type        = number
+  description = "The minimum number of connections/day a DB instance can be processed."
+}
+
 locals {
   rds_common_tags = merge(local.thrifty_common_tags, {
     service = "rds"
@@ -24,8 +39,8 @@ control "rds_db_instance_long_running" {
     select
       arn as resource,
       case
-        when date_part('day', now() - creation_time) > 90 then 'alarm'
-        when date_part('day', now() - creation_time) > 30 then 'info'
+        when date_part('day', now() - creation_time) > $1 then 'alarm'
+        when date_part('day', now() - creation_time) > $2 then 'info'
         else 'ok'
       end as status,
       title || ' has been in use for ' || date_part('day', now() - creation_time) || ' days.' as reason,
@@ -37,13 +52,21 @@ control "rds_db_instance_long_running" {
       pay_type = 'Postpaid';
   EOT
 
+  param "rds_db_instance_age_max_days" {
+    default = var.rds_db_instance_age_max_days
+  }
+
+  param "rds_db_instance_age_warning_days" {
+    default = var.rds_db_instance_age_warning_days
+  }
+
   tags = merge(local.rds_common_tags, {
     class = "managed"
   })
 }
 
 control "rds_db_instance_low_connection_count" {
-  title       = "RDS DB instances with fewer than 2 connections per day should be reviewed"
+  title       = "RDS DB instances with fewer than ${var.rds_db_instance_min_connection_per_day} connections per day should be reviewed"
   description = "These databases have had very little usage in the last 30 days and should be shut down when not in use."
   severity    = "high"
 
@@ -65,7 +88,7 @@ control "rds_db_instance_low_connection_count" {
       case
         when avg_max is null then 'error'
         when avg_max = 0 then 'alarm'
-        when avg_max < 2 then 'info'
+        when avg_max < $1 then 'info'
         else 'ok'
       end as status,
       case
@@ -79,6 +102,10 @@ control "rds_db_instance_low_connection_count" {
       alicloud_rds_instance as i
       left join rds_db_usage as u on u.db_instance_id = i.db_instance_id;
   EOT
+
+  param "rds_db_instance_min_connection_per_day" {
+    default = var.rds_db_instance_min_connection_per_day
+  }
 
   tags = merge(local.rds_common_tags, {
     class = "unused"

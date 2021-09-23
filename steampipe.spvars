@@ -1,0 +1,10 @@
+# ECS
+ecs_disk_max_iops = 32000
+ecs_disk_max_size_gb = 100
+ecs_running_instance_age_max_days = 90
+ecs_snapshot_age_max_days = 90
+
+# RDS
+rds_db_instance_age_max_days = 90
+rds_db_instance_age_warning_days = 30
+rds_db_instance_min_connection_per_day = 2

@@ -1,3 +1,23 @@
+variable "ecs_disk_max_iops" {
+  type        = number
+  description = "The maximum IOPS allowed for disks."
+}
+
+variable "ecs_disk_max_size_gb" {
+  type        = number
+  description = "The maximum size in GB allowed for disks."
+}
+
+variable "ecs_running_instance_age_max_days" {
+  type        = number
+  description = "The maximum number of days an instance can be running for."
+}
+
+variable "ecs_snapshot_age_max_days" {
+  type        = number
+  description = "The maximum number of days a snapshot can be retained for."
+}
+
 locals {
   ecs_common_tags = merge(local.thrifty_common_tags, {
     service = "ecs"
@@ -17,7 +37,7 @@ benchmark "ecs" {
     control.ecs_instance_large,
     control.ecs_instance_with_low_utilization,
     control.ecs_instance_long_running,
-    control.ecs_snapshot_age_90
+    control.ecs_snapshot_max_age
   ]
 }
 
@@ -52,7 +72,7 @@ control "ecs_disk_attached_stopped_instance" {
 }
 
 control "ecs_disk_large" {
-  title       = "Disks with over 100 GB should be resized if too large"
+  title       = "Disks with over ${var.ecs_disk_max_size_gb} GB should be resized if too large"
   description = "Large disks are unusual, expensive and should be reviewed."
   severity    = "low"
 
@@ -60,7 +80,7 @@ control "ecs_disk_large" {
     select
       arn as resource,
       case
-        when size <= 100 then 'ok'
+        when size <= $1 then 'ok'
         else 'alarm'
       end as status,
       disk_id || ' is ' || size || ' GiB.' as reason,
@@ -69,6 +89,10 @@ control "ecs_disk_large" {
     from
       alicloud_ecs_disk;
   EOT
+
+  param "ecs_disk_max_size_gb" {
+    default = var.ecs_disk_max_size_gb
+  }
 
   tags = merge(local.ecs_common_tags, {
     class = "deprecated"
@@ -136,7 +160,7 @@ control "ecs_instance_long_running" {
     select
       arn as resource,
       case
-        when date_part('day', now() - creation_time) > 90 then 'alarm'
+        when date_part('day', now() - creation_time) > $1 then 'alarm'
         else 'ok'
       end as status,
       title || ' has been running ' || date_part('day', now() - creation_time) || ' days.' as reason,
@@ -148,13 +172,17 @@ control "ecs_instance_long_running" {
       status in ('Running', 'Pending');
   EOT
 
+  param "ecs_running_instance_age_max_days" {
+    default = var.ecs_running_instance_age_max_days
+  }
+
   tags = merge(local.ecs_common_tags, {
     class = "deprecated"
   })
 }
 
-control "ecs_snapshot_age_90" {
-  title       = "Snapshots created over 90 days ago should be deleted if not required"
+control "ecs_snapshot_max_age" {
+  title       = "Snapshots created over ${var.ecs_snapshot_age_max_days} days ago should be deleted if not required"
   description = "Old snapshots are likely unneeded and costly to maintain."
   severity    = "low"
 
@@ -162,7 +190,7 @@ control "ecs_snapshot_age_90" {
     select
       'acs:acs:' || region || ':' || account_id || ':' || 'snapshot/' || snapshot_id as resource,
       case
-        when creation_time > current_timestamp - interval '90 days' then 'ok'
+        when creation_time > current_timestamp - interval '${var.ecs_snapshot_age_max_days} days' then 'ok'
         else 'alarm'
       end as status,
       snapshot_id || ' created at ' || creation_time || ' (' || date_part('day', now() - creation_time) || ' days).'
@@ -172,6 +200,10 @@ control "ecs_snapshot_age_90" {
     from
       alicloud_ecs_snapshot;
   EOT
+
+  param "ecs_snapshot_age_max_days" {
+    default = var.ecs_snapshot_age_max_days
+  }
 
   tags = merge(local.ecs_common_tags, {
     class = "unused"
@@ -188,7 +220,7 @@ control "ecs_disk_high_iops" {
       arn as resource,
       case
         when category <> 'cloud_essd' then 'skip'
-        when iops > 32000 then 'alarm'
+        when iops > $1 then 'alarm'
         else 'ok'
       end as status,
       case
@@ -200,6 +232,10 @@ control "ecs_disk_high_iops" {
     from
       alicloud_ecs_disk;
   EOT
+
+  param "ecs_disk_max_iops" {
+    default = var.ecs_disk_max_iops
+  }
 
   tags = merge(local.ecs_common_tags, {
     class = "deprecated"
