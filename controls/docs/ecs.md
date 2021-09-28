@@ -6,10 +6,10 @@ Thrifty developers eliminate their unused and under-utilized ECS instances. This
 
 | Variable | Description | Default |
 | - | - | - |
-| ecs_disk_max_iops | The maximum IOPS allowed for disks. | 32000 IOPS |
 | ecs_disk_max_size_gb | The maximum size in GB allowed for disks. | 100 GB |
-| ecs_running_instance_age_max_days | The maximum number of days an instance can be running for. | 90 days |
 | ecs_snapshot_age_max_days | The maximum number of days a snapshot can be retained for. | 90 days |
-
-<!--- TODO --->
-<!--- Use variables for instance type and instance low utilization --->
+| ecs_instance_allowed_types | A list of allowed instance types. PostgreSQL wildcards are supported. | ["%.nano", "%.small", "%._large", ".__large"] |
+| ecs_running_instance_age_max_days | The maximum number of days an instance can be running for. | 90 days |
+| ecs_disk_iops_high | The maximum IOPS allowed for disks. | 32000 IOPS |
+| ecs_instance_avg_cpu_utilization_low | The average CPU utilization required for instances to be considered infrequently used. This value should be lower than `ecs_instance_avg_cpu_utilization_high`. | 20% |
+| ecs_instance_avg_cpu_utilization_high | The average CPU utilization required for instances to be considered frequently used. This value should be higher than `ecs_instance_avg_cpu_utilization_low`. | 35% |

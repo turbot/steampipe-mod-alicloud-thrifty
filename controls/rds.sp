@@ -8,9 +8,9 @@ variable "rds_db_instance_age_warning_days" {
   description = "The maximum number of days set as warning threshold for a DB instance."
 }
 
-variable "rds_db_instance_min_connection_per_day" {
+variable "rds_db_instance_avg_connections" {
   type        = number
-  description = "The minimum number of connections/day a DB instance can be processed."
+  description = "The minimum number of average connections per day required for DB instances to be considered in-use."
 }
 
 locals {
@@ -53,11 +53,13 @@ control "rds_db_instance_long_running" {
   EOT
 
   param "rds_db_instance_age_max_days" {
-    default = var.rds_db_instance_age_max_days
+    description = "The maximum number of days a DB instance can be running for."
+    default     = var.rds_db_instance_age_max_days
   }
 
   param "rds_db_instance_age_warning_days" {
-    default = var.rds_db_instance_age_warning_days
+    description = "The maximum number of days set as warning threshold for a DB instance."
+    default     = var.rds_db_instance_age_warning_days
   }
 
   tags = merge(local.rds_common_tags, {
@@ -66,7 +68,7 @@ control "rds_db_instance_long_running" {
 }
 
 control "rds_db_instance_low_connection_count" {
-  title       = "RDS DB instances with fewer than ${var.rds_db_instance_min_connection_per_day} connections per day should be reviewed"
+  title       = "RDS DB instances with a low number connections per day should be reviewed"
   description = "These databases have had very little usage in the last 30 days and should be shut down when not in use."
   severity    = "high"
 
@@ -103,8 +105,9 @@ control "rds_db_instance_low_connection_count" {
       left join rds_db_usage as u on u.db_instance_id = i.db_instance_id;
   EOT
 
-  param "rds_db_instance_min_connection_per_day" {
-    default = var.rds_db_instance_min_connection_per_day
+  param "rds_db_instance_avg_connections" {
+    description = "The minimum number of average connections per day required for DB instances to be considered in-use."
+    default     = var.rds_db_instance_avg_connections
   }
 
   tags = merge(local.rds_common_tags, {

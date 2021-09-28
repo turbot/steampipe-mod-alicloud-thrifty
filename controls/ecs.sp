@@ -1,11 +1,16 @@
-variable "ecs_disk_max_iops" {
-  type        = number
-  description = "The maximum IOPS allowed for disks."
-}
-
 variable "ecs_disk_max_size_gb" {
   type        = number
   description = "The maximum size in GB allowed for disks."
+}
+
+variable "ecs_snapshot_age_max_days" {
+  type        = number
+  description = "The maximum number of days a snapshot can be retained for."
+}
+
+variable "ecs_instance_allowed_types" {
+  type        = list(string)
+  description = "A list of allowed instance types. PostgreSQL wildcards are supported."
 }
 
 variable "ecs_running_instance_age_max_days" {
@@ -13,9 +18,19 @@ variable "ecs_running_instance_age_max_days" {
   description = "The maximum number of days an instance can be running for."
 }
 
-variable "ecs_snapshot_age_max_days" {
+variable "ecs_disk_iops_high" {
   type        = number
-  description = "The maximum number of days a snapshot can be retained for."
+  description = "The maximum IOPS allowed for disks."
+}
+
+variable "ecs_instance_avg_cpu_utilization_low" {
+  type        = number
+  description = "The average CPU utilization required for instances to be considered infrequently used. This value should be lower than ecs_instance_avg_cpu_utilization_high."
+}
+
+variable "ecs_instance_avg_cpu_utilization_high" {
+  type        = number
+  description = "The average CPU utilization required for instances to be considered frequently used. This value should be higher than ecs_instance_avg_cpu_utilization_low."
 }
 
 locals {
@@ -91,7 +106,8 @@ control "ecs_disk_large" {
   EOT
 
   param "ecs_disk_max_size_gb" {
-    default = var.ecs_disk_max_size_gb
+    description = "The maximum size in GB allowed for disks."
+    default     = var.ecs_disk_max_size_gb
   }
 
   tags = merge(local.ecs_common_tags, {
@@ -127,7 +143,7 @@ control "ecs_disk_unattached" {
 }
 
 control "ecs_instance_large" {
-  title       = "ECS instances of type 12xlarge or higher should be reviewed"
+  title       = "Large ECS instances should be reviewed"
   description = "Large ECS instances are unusual, expensive and should be reviewed."
   severity    = "low"
 
@@ -136,8 +152,8 @@ control "ecs_instance_large" {
       arn as resource,
       case
         when status not in ('Running', 'Pending', 'Starting') then 'info'
-        when instance_type like '%.__xlarge' then 'alarm'
-        else 'ok'
+        when instance_type like any ($1) then 'ok'
+        else 'alarm'
       end as status,
       title || ' has type ' || instance_type || ' and is ' || status || '.' as reason,
       region,
@@ -145,6 +161,11 @@ control "ecs_instance_large" {
     from
       alicloud_ecs_instance;
   EOT
+
+  param "ecs_instance_allowed_types" {
+    description = "A list of allowed instance types. PostgreSQL wildcards are supported."
+    default     = var.ecs_instance_allowed_types
+  }
 
   tags = merge(local.ecs_common_tags, {
     class = "deprecated"
@@ -173,7 +194,8 @@ control "ecs_instance_long_running" {
   EOT
 
   param "ecs_running_instance_age_max_days" {
-    default = var.ecs_running_instance_age_max_days
+    description = "The maximum number of days an instance can be running for."
+    default     = var.ecs_running_instance_age_max_days
   }
 
   tags = merge(local.ecs_common_tags, {
@@ -202,7 +224,8 @@ control "ecs_snapshot_max_age" {
   EOT
 
   param "ecs_snapshot_age_max_days" {
-    default = var.ecs_snapshot_age_max_days
+    description = "The maximum number of days a snapshot can be retained for."
+    default     = var.ecs_snapshot_age_max_days
   }
 
   tags = merge(local.ecs_common_tags, {
@@ -233,8 +256,9 @@ control "ecs_disk_high_iops" {
       alicloud_ecs_disk;
   EOT
 
-  param "ecs_disk_max_iops" {
-    default = var.ecs_disk_max_iops
+  param "ecs_disk_iops_high" {
+    description = "The maximum IOPS allowed for disks."
+    default     = var.ecs_disk_iops_high
   }
 
   tags = merge(local.ecs_common_tags, {
@@ -264,8 +288,8 @@ control "ecs_instance_with_low_utilization" {
       arn as resource,
       case
         when avg_max is null then 'error'
-        when avg_max < 20 then 'alarm'
-        when avg_max < 35 then 'info'
+        when avg_max < $1 then 'alarm'
+        when avg_max < $2 then 'info'
         else 'ok'
       end as status,
       case
@@ -278,6 +302,16 @@ control "ecs_instance_with_low_utilization" {
       alicloud_ecs_instance as i
       left join ec2_instance_utilization as u on u.instance_id = i.instance_id;
   EOT
+
+  param "ecs_instance_avg_cpu_utilization_low" {
+    description = "The average CPU utilization required for instances to be considered infrequently used. This value should be lower than ecs_instance_avg_cpu_utilization_high."
+    default     = var.ecs_instance_avg_cpu_utilization_low
+  }
+
+  param "ecs_instance_avg_cpu_utilization_high" {
+    description = "The average CPU utilization required for instances to be considered frequently used. This value should be higher than ecs_instance_avg_cpu_utilization_low."
+    default     = var.ecs_instance_avg_cpu_utilization_high
+  }
 
   tags = merge(local.ecs_common_tags, {
     class = "unused"
