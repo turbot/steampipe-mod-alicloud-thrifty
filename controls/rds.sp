@@ -5,7 +5,7 @@ variable "rds_db_instance_age_max_days" {
 
 variable "rds_db_instance_age_warning_days" {
   type        = number
-  description = "The number of days DB instances can be running before warning."
+  description = "The number of days DB instances can be running before sending a warning."
 }
 
 variable "rds_db_instance_avg_connections" {
@@ -58,7 +58,7 @@ control "rds_db_instance_long_running" {
   }
 
   param "rds_db_instance_age_warning_days" {
-    description = "The number of days DB instances can be running before warning."
+    description = "The number of days DB instances can be running before sending a warning."
     default     = var.rds_db_instance_age_warning_days
   }
 
