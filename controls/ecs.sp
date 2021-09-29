@@ -1,26 +1,16 @@
+variable "ecs_disk_max_iops" {
+  type        = number
+  description = "The maximum IOPS allowed for disks."
+}
+
 variable "ecs_disk_max_size_gb" {
   type        = number
   description = "The maximum size in GB allowed for disks."
 }
 
-variable "ecs_snapshot_age_max_days" {
-  type        = number
-  description = "The maximum number of days a snapshot can be retained for."
-}
-
 variable "ecs_instance_allowed_types" {
   type        = list(string)
   description = "A list of allowed instance types. PostgreSQL wildcards are supported."
-}
-
-variable "ecs_running_instance_age_max_days" {
-  type        = number
-  description = "The maximum number of days an instance can be running for."
-}
-
-variable "ecs_disk_iops_high" {
-  type        = number
-  description = "The maximum IOPS allowed for disks."
 }
 
 variable "ecs_instance_avg_cpu_utilization_low" {
@@ -31,6 +21,16 @@ variable "ecs_instance_avg_cpu_utilization_low" {
 variable "ecs_instance_avg_cpu_utilization_high" {
   type        = number
   description = "The average CPU utilization required for instances to be considered frequently used. This value should be higher than ecs_instance_avg_cpu_utilization_low."
+}
+
+variable "ecs_running_instance_age_max_days" {
+  type        = number
+  description = "The maximum number of days an instance are allowed to run."
+}
+
+variable "ecs_snapshot_age_max_days" {
+  type        = number
+  description = "The maximum number of days a snapshot can be retained."
 }
 
 locals {
@@ -87,7 +87,7 @@ control "ecs_disk_attached_stopped_instance" {
 }
 
 control "ecs_disk_large" {
-  title       = "Disks with over ${var.ecs_disk_max_size_gb} GB should be resized if too large"
+  title       = "Disks should be resized if too large"
   description = "Large disks are unusual, expensive and should be reviewed."
   severity    = "low"
 
@@ -194,7 +194,7 @@ control "ecs_instance_long_running" {
   EOT
 
   param "ecs_running_instance_age_max_days" {
-    description = "The maximum number of days an instance can be running for."
+    description = "The maximum number of days an instance are allowed to run."
     default     = var.ecs_running_instance_age_max_days
   }
 
@@ -204,7 +204,7 @@ control "ecs_instance_long_running" {
 }
 
 control "ecs_snapshot_max_age" {
-  title       = "Snapshots created over ${var.ecs_snapshot_age_max_days} days ago should be deleted if not required"
+  title       = "Old snapshots should be deleted if not required"
   description = "Old snapshots are likely unneeded and costly to maintain."
   severity    = "low"
 
@@ -224,7 +224,7 @@ control "ecs_snapshot_max_age" {
   EOT
 
   param "ecs_snapshot_age_max_days" {
-    description = "The maximum number of days a snapshot can be retained for."
+    description = "The maximum number of days a snapshot can be retained."
     default     = var.ecs_snapshot_age_max_days
   }
 
@@ -256,9 +256,9 @@ control "ecs_disk_high_iops" {
       alicloud_ecs_disk;
   EOT
 
-  param "ecs_disk_iops_high" {
+  param "ecs_disk_max_iops" {
     description = "The maximum IOPS allowed for disks."
-    default     = var.ecs_disk_iops_high
+    default     = var.ecs_disk_max_iops
   }
 
   tags = merge(local.ecs_common_tags, {

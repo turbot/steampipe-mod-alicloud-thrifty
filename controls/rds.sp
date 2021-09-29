@@ -1,11 +1,11 @@
 variable "rds_db_instance_age_max_days" {
   type        = number
-  description = "The maximum number of days a DB instance can be running for."
+  description = "The maximum number of days DB instances can be running."
 }
 
 variable "rds_db_instance_age_warning_days" {
   type        = number
-  description = "The maximum number of days set as warning threshold for a DB instance."
+  description = "The number of days DB instances can be running before warning."
 }
 
 variable "rds_db_instance_avg_connections" {
@@ -53,12 +53,12 @@ control "rds_db_instance_long_running" {
   EOT
 
   param "rds_db_instance_age_max_days" {
-    description = "The maximum number of days a DB instance can be running for."
+    description = "The maximum number of days DB instances can be running."
     default     = var.rds_db_instance_age_max_days
   }
 
   param "rds_db_instance_age_warning_days" {
-    description = "The maximum number of days set as warning threshold for a DB instance."
+    description = "The number of days DB instances can be running before warning."
     default     = var.rds_db_instance_age_warning_days
   }
 
