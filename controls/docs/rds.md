@@ -2,7 +2,10 @@
 
 Thrifty developers check long running RDS database instances have the correct billing type and have recent connections.
 
-### Default Thresholds
+## Variables
 
-- [Long running RDS database instance threshold (90 Days)](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/controls/control.rds_db_instance_long_running)
-- [Low connection RDS database instance threshold (2 Max connections per day)](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/controls/control.rds_db_instance_low_connection_count)
+| Variable | Description | Default |
+| - | - | - |
+| rds_db_instance_age_max_days | The maximum number of days DB instances are allowed to run. | 90 days |
+| rds_db_instance_age_warning_days | The number of days DB instances can be running before sending a warning. | 30 days |
+| rds_db_instance_avg_connections | The minimum number of average connections per day required for DB instances to be considered in-use. | 2 connections/day |

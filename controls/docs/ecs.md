@@ -2,11 +2,14 @@
 
 Thrifty developers eliminate their unused and under-utilized ECS instances. This benchmark focuses on finding resources that have not been restarted recently, have old snapshots and have large, unused or inactive disks.
 
-### Default Thresholds
+## Variables
 
-- [Large ECS disk size threshold (100gb)](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/controls/control.ecs_disk_large)
-- [Old ECS snapshot threshold (90 days)](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/controls/control.ecs_snapshot_age_90)
-- [Long running ECS instance threshold (90 days)](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/controls/control.ecs_instance_long_running)
-- [Low utilization ECS instance threshold (< 35%)](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/controls/control.ecs_instance_with_low_utilization)
-- [High IOPS ECS disk threshold (32,000 IOPS)](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/controls/control.ecs_disk_high_iops)
-- [ECS instance types that are too big (> 12xlarge)](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/controls/control.ecs_instance_large)
+| Variable | Description | Default |
+| - | - | - |
+| ecs_disk_max_iops | The maximum IOPS allowed for disks. | 32000 IOPS |
+| ecs_disk_max_size_gb | The maximum size in GB allowed for disks. | 100 GB |
+| ecs_instance_allowed_types | A list of allowed instance types. PostgreSQL wildcards are supported. | ["%.nano", "%.small", "%._large", ".__large"] |
+| ecs_instance_avg_cpu_utilization_low | The average CPU utilization required for instances to be considered infrequently used. This value should be lower than `ecs_instance_avg_cpu_utilization_high`. | 20% |
+| ecs_instance_avg_cpu_utilization_high | The average CPU utilization required for instances to be considered frequently used. This value should be higher than `ecs_instance_avg_cpu_utilization_low`. | 35% |
+| ecs_running_instance_age_max_days | The maximum number of days instances are allowed to run. | 90 days |
+| ecs_snapshot_age_max_days | The maximum number of days snapshots can be retained. | 90 days |
