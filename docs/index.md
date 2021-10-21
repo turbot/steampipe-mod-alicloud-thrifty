@@ -6,6 +6,8 @@ repository: "https://github.com/turbot/steampipe-mod-alicloud-thrifty"
 
 Be Thrifty on Alibaba Cloud! This mod checks for unused resources and opportunities to optimize your spend on Alibaba Cloud.
 
+![image](https://github.com/turbot/steampipe-mod-alicloud-thrifty/blob/main/docs/alicloud-thrifty-console.png)
+
 ## References
 
 [Alibaba Cloud](https://in.alibabacloud.com/) provides on-demand cloud computing platforms and APIs to authenticated customers on a metered pay-as-you-go basis or as subscription.
