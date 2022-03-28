@@ -190,7 +190,7 @@ control "ecs_instance_long_running" {
     from
       alicloud_ecs_instance
     where
-      status in ('Running', 'Pending');
+      status = 'Running';
   EOT
 
   param "ecs_running_instance_age_max_days" {
