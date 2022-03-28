@@ -6,6 +6,8 @@ repository: "https://github.com/turbot/steampipe-mod-alicloud-thrifty"
 
 Be Thrifty on Alibaba Cloud! This mod checks for unused resources and opportunities to optimize your spend on Alibaba Cloud.
 
+![image](https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/main/docs/alicloud-thrifty-console.png)
+
 ## References
 
 [Alibaba Cloud](https://in.alibabacloud.com/) provides on-demand cloud computing platforms and APIs to authenticated customers on a metered pay-as-you-go basis or as subscription.
@@ -51,10 +53,9 @@ This mod uses the credentials configured in the [Steampipe Alicloud plugin](http
 
 ### Configuration
 
-Several benchmarks have [input variables](https://steampipe.io/docs/using-steampipe/mod-variables) that can be configured to better match your environment and requirements. Each variable has a default defined in `steampipe.spvars`, but these can be overwritten in several ways:
+Several benchmarks have [input variables](https://steampipe.io/docs/using-steampipe/mod-variables) that can be configured to better match your environment and requirements. Each variable has a default defined in its source file, e.g., `controls/ecs.sp`, but these can be overwritten in several ways:
 
-- Modify the `steampipe.spvars` file
-- Remove or comment out the value in `steampipe.spvars`, after which Steampipe will prompt you for a value when running a query or check
+- Copy and rename the `steampipe.spvars.example` file to `steampipe.spvars`, and then modify the variable values inside that file
 - Pass in a value on the command line:
 
   ```shell

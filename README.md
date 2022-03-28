@@ -2,6 +2,8 @@
 
 An Alibaba Cloud cost savings and waste checking tool.
 
+![image](https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/main/docs/alicloud-thrifty-console.png)
+
 ## Quick start
 
 1) Download and install Steampipe (https://steampipe.io/downloads). Or use Brew:
@@ -11,7 +13,7 @@ brew tap turbot/tap
 brew install steampipe
 
 steampipe -v
-steampipe version 0.8.2
+steampipe version 0.13.2
 ```
 
 Install the Alibaba Cloud plugin
@@ -40,6 +42,31 @@ Your can also run a specific controls:
 ```shell
 steampipe check control.ecs_instance_with_low_utilization
 ```
+
+### Credentials
+
+This mod uses the credentials configured in the [Steampipe Alicloud plugin](https://hub.steampipe.io/plugins/turbot/alicloud).
+
+### Configuration
+
+Several benchmarks have [input variables](https://steampipe.io/docs/using-steampipe/mod-variables) that can be configured to better match your environment and requirements. Each variable has a default defined in its source file, e.g., `controls/ecs.sp`, but these can be overwritten in several ways:
+
+- Copy and rename the `steampipe.spvars.example` file to `steampipe.spvars`, and then modify the variable values inside that file
+- Pass in a value on the command line:
+
+  ```shell
+  steampipe check benchmark.ecs --var=ecs_disk_max_size_gb=100
+  ```
+
+- Set an environment variable:
+
+  ```shell
+  SP_VAR_ecs_disk_max_size_gb=100 steampipe check control.ecs_disk_large
+  ```
+
+  - Note: When using environment variables, if the variable is defined in `steampipe.spvars` or passed in through the command line, either of those will take precedence over the environment variable value. For more information on variable definition precedence, please see the link below.
+
+These are only some of the ways you can set variables. For a full list, please see [Passing Input Variables](https://steampipe.io/docs/using-steampipe/mod-variables#passing-input-variables).
 
 ## Current Thrifty Checks
 
