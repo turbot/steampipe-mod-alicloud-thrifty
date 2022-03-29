@@ -1,36 +1,43 @@
 variable "ecs_disk_max_iops" {
   type        = number
   description = "The maximum IOPS allowed for disks."
+  default     = 32000
 }
 
 variable "ecs_disk_max_size_gb" {
   type        = number
   description = "The maximum size in GB allowed for disks."
+  default     = 100
 }
 
 variable "ecs_instance_allowed_types" {
   type        = list(string)
   description = "A list of allowed instance types. PostgreSQL wildcards are supported."
+  default     = ["%.nano", "%.small", "%._large", ".__large"]
 }
 
 variable "ecs_instance_avg_cpu_utilization_low" {
   type        = number
   description = "The average CPU utilization required for instances to be considered infrequently used. This value should be lower than ecs_instance_avg_cpu_utilization_high."
+  default     = 20
 }
 
 variable "ecs_instance_avg_cpu_utilization_high" {
   type        = number
   description = "The average CPU utilization required for instances to be considered frequently used. This value should be higher than ecs_instance_avg_cpu_utilization_low."
+  default     = 35
 }
 
 variable "ecs_running_instance_age_max_days" {
   type        = number
   description = "The maximum number of days an instance are allowed to run."
+  default     = 90
 }
 
 variable "ecs_snapshot_age_max_days" {
   type        = number
   description = "The maximum number of days a snapshot can be retained."
+  default     = 90
 }
 
 locals {
@@ -190,7 +197,7 @@ control "ecs_instance_long_running" {
     from
       alicloud_ecs_instance
     where
-      status in ('Running', 'Pending');
+      status = 'Running';
   EOT
 
   param "ecs_running_instance_age_max_days" {

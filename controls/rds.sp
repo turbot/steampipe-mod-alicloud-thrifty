@@ -1,16 +1,19 @@
 variable "rds_db_instance_age_max_days" {
   type        = number
   description = "The maximum number of days DB instances can be running."
+  default     = 90
 }
 
 variable "rds_db_instance_age_warning_days" {
   type        = number
   description = "The number of days DB instances can be running before sending a warning."
+  default     = 30
 }
 
 variable "rds_db_instance_avg_connections" {
   type        = number
   description = "The minimum number of average connections per day required for DB instances to be considered in-use."
+  default     = 2
 }
 
 locals {
