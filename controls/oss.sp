@@ -1,7 +1,6 @@
 locals {
-
-  oss_common_tags = merge(local.thrifty_common_tags, {
-    service = "oss"
+  oss_common_tags = merge(local.alicloud_thrifty_common_tags, {
+    service = "AliCloud/OSS"
   })
 }
 
@@ -9,10 +8,13 @@ benchmark "oss" {
   title         = "OSS Checks"
   description   = "Thrifty developers ensure their OSS buckets have managed lifecycle policies."
   documentation = file("./controls/docs/oss.md")
-  tags          = local.oss_common_tags
   children = [
     control.oss_bucket_without_lifecycle_policy
   ]
+
+  tags = merge(local.oss_common_tags, {
+    type = "Benchmark"
+  })
 }
 
 control "oss_bucket_without_lifecycle_policy" {
