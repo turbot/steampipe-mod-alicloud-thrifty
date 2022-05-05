@@ -1,6 +1,6 @@
 locals {
-  actiontrail_common_tags = merge(local.thrifty_common_tags, {
-    service = "actiontrail"
+  actiontrail_common_tags = merge(local.alicloud_thrifty_common_tags, {
+    service = "AliCloud/ActionTrail"
   })
 }
 
@@ -8,11 +8,14 @@ benchmark "actiontrail" {
   title         = "ActionTrail Checks"
   description   = "Thrifty developers know that multiple active ActionTrail trails can add significant costs. Be thrifty and eliminate the extra trails. One trail to rule them all."
   documentation = file("./controls/docs/actiontrail.md")
-  tags          = local.actiontrail_common_tags
   children = [
     control.actiontrail_multiple_global_trails,
     control.actiontrail_multiple_regional_trails
   ]
+
+  tags = merge(local.actiontrail_common_tags, {
+    type = "Benchmark"
+  })
 }
 
 control "actiontrail_multiple_global_trails" {

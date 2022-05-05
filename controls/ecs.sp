@@ -41,8 +41,8 @@ variable "ecs_snapshot_age_max_days" {
 }
 
 locals {
-  ecs_common_tags = merge(local.thrifty_common_tags, {
-    service = "ecs"
+  ecs_common_tags = merge(local.alicloud_thrifty_common_tags, {
+    service = "AliCloud/ECS"
   })
 }
 
@@ -50,7 +50,6 @@ benchmark "ecs" {
   title         = "ECS Checks"
   description   = "Thrifty developers eliminate unused and under-utilized ECS resources."
   documentation = file("./controls/docs/ecs.md")
-  tags          = local.ecs_common_tags
   children = [
     control.ecs_disk_attached_stopped_instance,
     control.ecs_disk_high_iops,
@@ -61,6 +60,10 @@ benchmark "ecs" {
     control.ecs_instance_long_running,
     control.ecs_snapshot_max_age
   ]
+
+  tags = merge(local.ecs_common_tags, {
+    type = "Benchmark"
+  })
 }
 
 control "ecs_disk_attached_stopped_instance" {

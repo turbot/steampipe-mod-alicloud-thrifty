@@ -1,6 +1,6 @@
 locals {
-  vpc_common_tags = merge(local.thrifty_common_tags, {
-    service = "vpc"
+  vpc_common_tags = merge(local.alicloud_thrifty_common_tags, {
+    service = "AliCloud/VPC"
   })
 }
 
@@ -8,11 +8,14 @@ benchmark "vpc" {
   title         = "VPC Checks"
   description   = "Thrifty developers eliminate unused IP addresses."
   documentation = file("./controls/docs/vpc.md")
-  tags          = local.vpc_common_tags
   children = [
     control.vpc_nat_gateway_unused,
     control.vpc_eip_unattached
   ]
+
+  tags = merge(local.vpc_common_tags, {
+    type = "Benchmark"
+  })
 }
 
 control "vpc_eip_unattached" {
