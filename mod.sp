@@ -3,7 +3,7 @@ locals {
   alicloud_thrifty_common_tags = {
     category = "Cost"
     plugin   = "alicloud"
-    service  = "Alibaba Cloud"
+    service  = "AliCloud"
   }
 }
 
