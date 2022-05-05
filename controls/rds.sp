@@ -17,8 +17,8 @@ variable "rds_db_instance_avg_connections" {
 }
 
 locals {
-  rds_common_tags = merge(local.thrifty_common_tags, {
-    service = "rds"
+  rds_common_tags = merge(local.alicloud_thrifty_common_tags, {
+    service = "AliCloud/RDS"
   })
 }
 
@@ -26,11 +26,14 @@ benchmark "rds" {
   title         = "RDS Checks"
   description   = "Thrifty developers check long running rds databases should have billing type as 'Subscription' instead of 'Pay-as-you-go'."
   documentation = file("./controls/docs/rds.md")
-  tags          = local.rds_common_tags
   children = [
     control.rds_db_instance_long_running,
     control.rds_db_instance_low_connection_count
   ]
+
+  tags = merge(local.rds_common_tags, {
+    type = "Benchmark"
+  })
 }
 
 control "rds_db_instance_long_running" {
