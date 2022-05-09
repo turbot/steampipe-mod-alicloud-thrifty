@@ -1,3 +1,9 @@
+## v0.6 [2022-05-09]
+
+_Enhancements_
+
+- Updated docs/index.md and README with new dashboard screenshots and latest format. ([#29](https://github.com/turbot/steampipe-mod-alicloud-thrifty/pull/29))
+
 ## v0.5 [2022-05-05]
 
 _Enhancements_
