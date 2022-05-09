@@ -2,46 +2,83 @@
 
 An Alibaba Cloud cost savings and waste checking tool.
 
-![image](https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/main/docs/alicloud-thrifty-console.png)
+Run checks in a dashboard:
 
-## Quick start
+![image](https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/main/docs/alicloud_thrifty_dashboard.png)
 
-1) Download and install Steampipe (https://steampipe.io/downloads). Or use Brew:
+Or in a terminal:
 
-```shell
+![image](https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/main/docs/alicloud_thrifty_terminal.png)
+
+Includes checks for:
+
+- Underused **RDS Databases**
+- Unused, underused and oversized **ECS Instances**
+- Unused, underused and oversized **ECS Disks** and **Snapshots**
+- **OSS Buckets** without lifecycle policies
+- Unattached **Elastic IPs**
+- Unused **VPC NAT Gateways**
+- [#TODO List](https://github.com/turbot/steampipe-mod-alicloud-thrifty/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+
+## Getting started
+
+### Installation
+
+Download and install Steampipe (https://steampipe.io/downloads). Or use Brew:
+
+```sh
 brew tap turbot/tap
 brew install steampipe
-
-steampipe -v
-steampipe version 0.13.2
 ```
 
-Install the Alibaba Cloud plugin
+Install the alicloud plugin with [Steampipe](https://steampipe.io):
 
-```shell
+```sh
 steampipe plugin install alicloud
 ```
 
-Clone this repo and move into the directory:
+Clone:
 
 ```sh
 git clone https://github.com/turbot/steampipe-mod-alicloud-thrifty.git
 cd steampipe-mod-alicloud-thrifty
 ```
 
+### Usage
+
+Start your dashboard server to get started:
+
+```sh
+steampipe dashboard
+```
+
+By default, the dashboard interface will then be launched in a new browser
+window at https://localhost:9194. From here, you can run benchmarks by
+selecting one or searching for a specific one.
+
+Instead of running benchmarks in a dashboard, you can also run them within your
+terminal with the `steampipe check` command:
+
 Run all benchmarks:
 
-```shell
+```sh
 steampipe check all
 ```
 
-![image](https://github.com/turbot/steampipe-mod-alicloud-thrifty/blob/main/docs/alicloud-thrifty-console.png?raw=true)
+Run a single benchmark:
 
-Your can also run a specific controls:
-
-```shell
-steampipe check control.ecs_instance_with_low_utilization
+```sh
+steampipe check benchmark.ecs
 ```
+
+Run a specific control:
+
+```sh
+steampipe check control.ecs_disk_high_iops
+```
+
+Different output formats are also available, for more information please see
+[Output Formats](https://steampipe.io/docs/reference/cli/check#output-formats).
 
 ### Credentials
 
@@ -54,13 +91,13 @@ Several benchmarks have [input variables](https://steampipe.io/docs/using-steamp
 - Copy and rename the `steampipe.spvars.example` file to `steampipe.spvars`, and then modify the variable values inside that file
 - Pass in a value on the command line:
 
-  ```shell
+  ```sh
   steampipe check benchmark.ecs --var=ecs_disk_max_size_gb=100
   ```
 
 - Set an environment variable:
 
-  ```shell
+  ```sh
   SP_VAR_ecs_disk_max_size_gb=100 steampipe check control.ecs_disk_large
   ```
 
@@ -68,52 +105,15 @@ Several benchmarks have [input variables](https://steampipe.io/docs/using-steamp
 
 These are only some of the ways you can set variables. For a full list, please see [Passing Input Variables](https://steampipe.io/docs/using-steampipe/mod-variables#passing-input-variables).
 
-## Current Thrifty Checks
-
-- Underused **RDS Databases**
-- Unused, underused and oversized **ECS Instances**
-- Unused, underused and oversized **ECS Disks** and **Snapshots**
-- **OSS Buckets** without lifecycle policies
-- Unattached **Elastic IPs**
-- Unused **VPC NAT Gateways**
-- [#TODO List](https://github.com/turbot/steampipe-mod-alicloud-thrifty/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
-
-**Use introspection to view the available controls:**:
-
-```shell
-steampipe query "select resource_name from steampipe_control;"
-```
-
 ## Contributing
 
-Have an idea for a thrifty check but aren't sure how to get started?
+If you have an idea for additional controls or just want to help maintain and extend this mod ([or others](https://github.com/topics/steampipe-mod)) we would love you to join the community and start contributing.
 
-- **[Join our Slack community →](https://join.slack.com/t/steampipe/shared_invite/zt-oij778tv-lYyRTWOTMQYBVAbtPSWs3g)**
-- **[Mod developer guide →](https://steampipe.io/docs/using-steampipe/writing-controls)**
-
-**Prerequisites**:
-
-- [Steampipe installed](https://steampipe.io/downloads)
-- Steampipe Alibaba Cloud plugin installed (see above)
-
-**Fork**:
-Click on the GitHub Fork Widget. (Don't forget to :star: the repo!)
-
-**Clone**:
-
-1. Change the current working directory to the location where you want to put the cloned directory on your local filesystem.
-2. Type the clone command below inserting your GitHub username instead of `YOUR-USERNAME`:
-
-```sh
-git clone git@github.com:YOUR-USERNAME/steampipe-mod-alicloud-thrifty
-cd steampipe-mod-alicloud-thrifty
-```
-
-Thanks for getting involved! We would love to have you [join our Slack community](https://join.slack.com/t/steampipe/shared_invite/zt-oij778tv-lYyRTWOTMQYBVAbtPSWs3g) and hang out with other Mod developers.
+- **[Join our Slack community →](https://steampipe.io/community/join)** and hang out with other Mod developers.
 
 Please see the [contribution guidelines](https://github.com/turbot/steampipe/blob/main/CONTRIBUTING.md) and our [code of conduct](https://github.com/turbot/steampipe/blob/main/CODE_OF_CONDUCT.md). All contributions are subject to the [Apache 2.0 open source license](https://github.com/turbot/steampipe-mod-alicloud-thrifty/blob/main/LICENSE).
 
-`help wanted` issues:
+Want to help but not sure where to start? Pick up one of the `help wanted` issues:
 
 - [Steampipe](https://github.com/turbot/steampipe/labels/help%20wanted)
 - [Alibaba Cloud Thrifty Mod](https://github.com/turbot/steampipe-mod-alicloud-thrifty/labels/help%20wanted)
