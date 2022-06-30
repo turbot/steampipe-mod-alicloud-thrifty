@@ -1,4 +1,4 @@
-# Alibaba Cloud Thrifty
+# Alibaba Cloud Thrifty Mod for Steampipe
 
 An Alibaba Cloud cost savings and waste checking tool.
 
