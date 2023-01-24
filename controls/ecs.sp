@@ -83,9 +83,8 @@ control "ecs_disk_attached_stopped_instance" {
         when d.instance_id is null then d.title || ' not attached to instance.'
         when i.status = 'Running' then d.title || ' attached to running instance' || ' ' || d.instance_id || '.'
         else d.title || ' attached to stopped instance' || ' ' || d.instance_id || '.'
-      end as reason,
-      d.region,
-      d.account_id
+      end as reason
+      ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "d.")}
     from
       alicloud_ecs_disk as d
       left join alicloud_ecs_instance as i on d.instance_id = i.instance_id;
@@ -108,9 +107,9 @@ control "ecs_disk_large" {
         when size <= $1 then 'ok'
         else 'alarm'
       end as status,
-      disk_id || ' is ' || size || ' GiB.' as reason,
-      region,
-      account_id
+      disk_id || ' is ' || size || ' GiB.' as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_ecs_disk;
   EOT
@@ -140,9 +139,9 @@ control "ecs_disk_unattached" {
       case
         when status = 'Available' then title || ' has no attachment.'
         else title || ' has attachment.'
-      end as reason,
-      region,
-      account_id
+      end as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_ecs_disk;
   EOT
@@ -165,9 +164,9 @@ control "ecs_instance_large" {
         when instance_type like any ($1) then 'ok'
         else 'alarm'
       end as status,
-      title || ' has type ' || instance_type || ' and is ' || status || '.' as reason,
-      region,
-      account_id
+      title || ' has type ' || instance_type || ' and is ' || status || '.' as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_ecs_instance;
   EOT
@@ -194,9 +193,9 @@ control "ecs_instance_long_running" {
         when date_part('day', now() - creation_time) > $1 then 'alarm'
         else 'ok'
       end as status,
-      title || ' has been running ' || date_part('day', now() - creation_time) || ' days.' as reason,
-      region,
-      account_id
+      title || ' has been running ' || date_part('day', now() - creation_time) || ' days.' as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_ecs_instance
     where
@@ -222,13 +221,13 @@ control "ecs_snapshot_max_age" {
     select
       'acs:acs:' || region || ':' || account_id || ':' || 'snapshot/' || snapshot_id as resource,
       case
-        when creation_time > current_timestamp - interval '${var.ecs_snapshot_age_max_days} days' then 'ok'
+        when date_part('day', now() - creation_time) < $1 then 'ok'
         else 'alarm'
       end as status,
       snapshot_id || ' created at ' || creation_time || ' (' || date_part('day', now() - creation_time) || ' days).'
-      as reason,
-      region,
-      account_id
+      as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_ecs_snapshot;
   EOT
@@ -259,9 +258,9 @@ control "ecs_disk_high_iops" {
       case
         when category <> 'cloud_essd' then title || ' is of type ' || category || '.'
         else title || ' with performance category ' || performance_level || ' has ' || iops || ' iops.'
-      end as reason,
-      region,
-      account_id
+      end as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_ecs_disk;
   EOT
@@ -305,9 +304,9 @@ control "ecs_instance_with_low_utilization" {
       case
         when avg_max is null then 'Cloud monitor metrics not available for ' || title || '.'
         else title || ' is averaging ' || avg_max || '% max utilization over the last ' || days || ' days.'
-      end as reason,
-      region,
-      account_id
+      end as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_ecs_instance as i
       left join ec2_instance_utilization as u on u.instance_id = i.instance_id;

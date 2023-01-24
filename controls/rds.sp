@@ -49,9 +49,9 @@ control "rds_db_instance_long_running" {
         when date_part('day', now() - creation_time) > $2 then 'info'
         else 'ok'
       end as status,
-      title || ' has been in use for ' || date_part('day', now() - creation_time) || ' days.' as reason,
-      region,
-      account_id
+      title || ' has been in use for ' || date_part('day', now() - creation_time) || ' days.' as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_rds_instance
     where
@@ -103,9 +103,9 @@ control "rds_db_instance_low_connection_count" {
         when avg_max is null then 'Cloud monitor metrics not available for ' || title || '.'
         when avg_max = 0 then title || ' has not been connected to in the last ' || days || ' days.'
         else title || ' is averaging ' || avg_max || ' max connections/day in the last ' || days || ' days.'
-      end as reason,
-      region,
-      account_id
+      end as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_rds_instance as i
       left join rds_db_usage as u on u.db_instance_id = i.db_instance_id;

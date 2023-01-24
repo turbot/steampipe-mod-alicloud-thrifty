@@ -34,9 +34,9 @@ control "oss_bucket_without_lifecycle_policy" {
         when lifecycle_rules is null then title || ' has no lifecycle policy.'
         when lifecycle_rules @> '[{"Status":"Enabled"}]' then title || ' has lifecycle policy.'
         else title || ' has disabled lifecycle policy.'
-      end as reason,
-      region,
-      account_id
+      end as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_oss_bucket;
   EOT
