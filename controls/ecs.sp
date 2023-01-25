@@ -84,6 +84,7 @@ control "ecs_disk_attached_stopped_instance" {
         when i.status = 'Running' then d.title || ' attached to running instance' || ' ' || d.instance_id || '.'
         else d.title || ' attached to stopped instance' || ' ' || d.instance_id || '.'
       end as reason
+      ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "d.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "d.")}
     from
       alicloud_ecs_disk as d
