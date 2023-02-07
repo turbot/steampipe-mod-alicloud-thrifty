@@ -10,7 +10,6 @@ Be Thrifty on Alibaba Cloud! This mod checks for unused resources and opportunit
 <img src="https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/main/docs/alicloud_thrifty_ecs_dashboard.png" width="50%" type="thumbnail"/>
 <img src="https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/main/docs/alicloud_thrifty_console.png" width="50%" type="thumbnail"/>
 
-
 ## References
 
 [Alibaba Cloud](https://in.alibabacloud.com/) provides on-demand cloud computing platforms and APIs to authenticated customers on a metered pay-as-you-go basis or as subscription.
@@ -107,6 +106,31 @@ Several benchmarks have [input variables](https://steampipe.io/docs/using-steamp
   - Note: When using environment variables, if the variable is defined in `steampipe.spvars` or passed in through the command line, either of those will take precedence over the environment variable value. For more information on variable definition precedence, please see the link below.
 
 These are only some of the ways you can set variables. For a full list, please see [Passing Input Variables](https://steampipe.io/docs/using-steampipe/mod-variables#passing-input-variables).
+
+### Common and Tag Dimensions
+
+The benchmark queries use common properties (like `account_id`, `connection_name` and `region`) and tags that are defined in the form of a default list of strings in the `mod.sp` file. These properties can be overwritten in several ways:
+
+- Copy and rename the `steampipe.spvars.example` file to `steampipe.spvars`, and then modify the variable values inside that file
+- Pass in a value on the command line:
+
+  ```shell
+  steampipe check benchmark.ecs --var 'common_dimensions=["account_id", "connection_name", "region"]'
+  ```
+
+  ```shell
+  steampipe check benchmark.ecs --var 'tag_dimensions=["Environment", "Owner"]'
+  ```
+
+- Set an environment variable:
+
+  ```shell
+  SP_VAR_common_dimensions='["account_id", "connection_name", "region"]' steampipe check control.ecs_disk_large
+  ```
+
+  ```shell
+  SP_VAR_tag_dimensions='["Environment", "Owner"]' steampipe check control.ecs_disk_large
+  ```
 
 ## Contributing
 
