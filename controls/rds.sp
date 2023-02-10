@@ -41,7 +41,7 @@ control "rds_db_instance_long_running" {
   description = "Subscription billing for long running RDS DB instances is more cost effective and you can receive larger discounts for longer subscription periods."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       arn as resource,
       case
@@ -56,7 +56,7 @@ control "rds_db_instance_long_running" {
       alicloud_rds_instance
     where
       pay_type = 'Postpaid';
-  EOT
+  EOQ
 
   param "rds_db_instance_age_max_days" {
     description = "The maximum number of days DB instances can be running."
@@ -78,7 +78,7 @@ control "rds_db_instance_low_connection_count" {
   description = "These databases have had very little usage in the last 30 days and should be shut down when not in use."
   severity    = "high"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     with rds_db_usage as (
       select
         db_instance_id,
@@ -109,7 +109,7 @@ control "rds_db_instance_low_connection_count" {
     from
       alicloud_rds_instance as i
       left join rds_db_usage as u on u.db_instance_id = i.db_instance_id;
-  EOT
+  EOQ
 
   param "rds_db_instance_avg_connections" {
     description = "The minimum number of average connections per day required for DB instances to be considered in-use."

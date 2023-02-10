@@ -22,7 +22,7 @@ control "oss_bucket_without_lifecycle_policy" {
   description = "Buckets should have a lifecycle policy associated for data retention."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       arn as resource,
       case
@@ -39,7 +39,7 @@ control "oss_bucket_without_lifecycle_policy" {
       ${local.common_dimensions_sql}
     from
       alicloud_oss_bucket;
-  EOT
+  EOQ
 
   tags = merge(local.oss_common_tags, {
     class = "managed"

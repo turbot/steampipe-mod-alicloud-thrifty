@@ -23,7 +23,7 @@ control "actiontrail_multiple_global_trails" {
   description = "Your ActionTrail trails in each account are charged based on the billing policies of an Object Storage Service (OSS) bucket or a Log Service Logstore."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     with global_trails as (
       select
         count(*) as total
@@ -50,7 +50,7 @@ control "actiontrail_multiple_global_trails" {
     where
       trail_region = 'All'
       and status = 'Enable';
-  EOT
+  EOQ
 
   tags = merge(local.actiontrail_common_tags, {
     class = "managed"
@@ -62,7 +62,7 @@ control "actiontrail_multiple_regional_trails" {
   description   = "Your actiontrail in each region is charged based on the billing policies of an Object Storage Service (OSS) bucket or a Log Service Logstore."
   severity      = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     with
       global_trails as (
         select
@@ -120,7 +120,7 @@ control "actiontrail_multiple_regional_trails" {
         and regional_trails.region = t.region
         and not trail_region = 'All'
         and not is_organization_trail;
-  EOT
+  EOQ
 
   tags = merge(local.actiontrail_common_tags, {
     class = "managed"

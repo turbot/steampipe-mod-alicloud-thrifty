@@ -71,7 +71,7 @@ control "ecs_disk_attached_stopped_instance" {
   description = "Instances that are stopped may no longer need any attached disks."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       d.arn as resource,
       case
@@ -89,7 +89,7 @@ control "ecs_disk_attached_stopped_instance" {
     from
       alicloud_ecs_disk as d
       left join alicloud_ecs_instance as i on d.instance_id = i.instance_id;
-  EOT
+  EOQ
 
   tags = merge(local.ecs_common_tags, {
     class = "deprecated"
@@ -101,7 +101,7 @@ control "ecs_disk_large" {
   description = "Large disks are unusual, expensive and should be reviewed."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       arn as resource,
       case
@@ -113,7 +113,7 @@ control "ecs_disk_large" {
       ${local.common_dimensions_sql}
     from
       alicloud_ecs_disk;
-  EOT
+  EOQ
 
   param "ecs_disk_max_size_gb" {
     description = "The maximum size in GB allowed for disks."
@@ -130,7 +130,7 @@ control "ecs_disk_unattached" {
   description = "Unattached disks are charged by Alicloud, they should be removed unless there is a business need to retain them."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       arn as resource,
       case
@@ -145,7 +145,7 @@ control "ecs_disk_unattached" {
       ${local.common_dimensions_sql}
     from
       alicloud_ecs_disk;
-  EOT
+  EOQ
 
   tags = merge(local.ecs_common_tags, {
     class = "unused"
@@ -157,7 +157,7 @@ control "ecs_instance_large" {
   description = "Large ECS instances are unusual, expensive and should be reviewed."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       arn as resource,
       case
@@ -170,7 +170,7 @@ control "ecs_instance_large" {
       ${local.common_dimensions_sql}
     from
       alicloud_ecs_instance;
-  EOT
+  EOQ
 
   param "ecs_instance_allowed_types" {
     description = "A list of allowed instance types. PostgreSQL wildcards are supported."
@@ -187,7 +187,7 @@ control "ecs_instance_long_running" {
   description = "Instances should ideally be ephemeral and rehydrated frequently. Check why these instances have been running for so long."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       arn as resource,
       case
@@ -201,7 +201,7 @@ control "ecs_instance_long_running" {
       alicloud_ecs_instance
     where
       status = 'Running';
-  EOT
+  EOQ
 
   param "ecs_running_instance_age_max_days" {
     description = "The maximum number of days an instance are allowed to run."
@@ -218,7 +218,7 @@ control "ecs_snapshot_max_age" {
   description = "Old snapshots are likely unneeded and costly to maintain."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       'acs:acs:' || region || ':' || account_id || ':' || 'snapshot/' || snapshot_id as resource,
       case
@@ -231,7 +231,7 @@ control "ecs_snapshot_max_age" {
       ${local.common_dimensions_sql}
     from
       alicloud_ecs_snapshot;
-  EOT
+  EOQ
 
   param "ecs_snapshot_age_max_days" {
     description = "The maximum number of days a snapshot can be retained."
@@ -248,7 +248,7 @@ control "ecs_disk_high_iops" {
   description = "High IOPS PL1, PL2 and PL3 disks are costly and their usage should be reviewed."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       arn as resource,
       case
@@ -264,7 +264,7 @@ control "ecs_disk_high_iops" {
       ${local.common_dimensions_sql}
     from
       alicloud_ecs_disk;
-  EOT
+  EOQ
 
   param "ecs_disk_max_iops" {
     description = "The maximum IOPS allowed for disks."
@@ -281,7 +281,7 @@ control "ecs_instance_with_low_utilization" {
   description = "Resize or eliminate underutilized instances."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     with ec2_instance_utilization as (
       select
         instance_id,
@@ -311,7 +311,7 @@ control "ecs_instance_with_low_utilization" {
     from
       alicloud_ecs_instance as i
       left join ec2_instance_utilization as u on u.instance_id = i.instance_id;
-  EOT
+  EOQ
 
   param "ecs_instance_avg_cpu_utilization_low" {
     description = "The average CPU utilization required for instances to be considered infrequently used. This value should be lower than ecs_instance_avg_cpu_utilization_high."

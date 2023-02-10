@@ -23,7 +23,7 @@ control "vpc_eip_unattached" {
   description = "Unattached external IPs cost money and should be released."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       'acs:vpc:' || region || ':' || account_id || ':' || 'eip/' || allocation_id as resource,
       case
@@ -37,7 +37,7 @@ control "vpc_eip_unattached" {
       ${local.common_dimensions_sql}
     from
       alicloud_vpc_eip;
-  EOT
+  EOQ
 
   tags = merge(local.vpc_common_tags, {
     class = "unused"
@@ -49,7 +49,7 @@ control "vpc_nat_gateway_unused" {
   description = "NAT gateways are charged on an hourly basis once provisioned and available. Unused NAT gateways should be deleted if not used."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     with instance_data as (
       select
         instance_id,
@@ -78,7 +78,7 @@ control "vpc_nat_gateway_unused" {
     from
       alicloud_vpc_nat_gateway as nat
       left join instance_data as i on nat_gateway_private_info ->> 'VswitchId' = i.vswitch_id;
-  EOT
+  EOQ
 
   tags = merge(local.vpc_common_tags, {
     class = "unused"

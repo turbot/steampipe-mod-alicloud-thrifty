@@ -42,7 +42,7 @@ locals {
 
 locals {
   # Local internal variable with the full SQL select clause for common
-  # and tag dimensions   . Do not edit directly.
+  # and tag dimensions. Do not edit directly.
   common_dimensions_sql = replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "")
   tag_dimensions_sql = replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "")
 }
