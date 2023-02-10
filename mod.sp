@@ -22,7 +22,7 @@ variable "tag_dimensions" {
   description = "A list of tags to add as dimensions to each control."
   # A list of tag names to include as dimensions for resources that support
   # tags (e.g. "Owner", "Environment"). Default to empty since tag names are
-  # a personal choice
+  # a personal choice.
   default     = []
 }
 
