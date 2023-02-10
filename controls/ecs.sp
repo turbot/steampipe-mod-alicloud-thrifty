@@ -71,7 +71,7 @@ control "ecs_disk_attached_stopped_instance" {
   description = "Instances that are stopped may no longer need any attached disks."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       d.arn as resource,
       case
@@ -83,13 +83,13 @@ control "ecs_disk_attached_stopped_instance" {
         when d.instance_id is null then d.title || ' not attached to instance.'
         when i.status = 'Running' then d.title || ' attached to running instance' || ' ' || d.instance_id || '.'
         else d.title || ' attached to stopped instance' || ' ' || d.instance_id || '.'
-      end as reason,
-      d.region,
-      d.account_id
+      end as reason
+      ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "d.")}
+      ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "d.")}
     from
       alicloud_ecs_disk as d
       left join alicloud_ecs_instance as i on d.instance_id = i.instance_id;
-  EOT
+  EOQ
 
   tags = merge(local.ecs_common_tags, {
     class = "deprecated"
@@ -101,19 +101,19 @@ control "ecs_disk_large" {
   description = "Large disks are unusual, expensive and should be reviewed."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       arn as resource,
       case
         when size <= $1 then 'ok'
         else 'alarm'
       end as status,
-      disk_id || ' is ' || size || ' GiB.' as reason,
-      region,
-      account_id
+      disk_id || ' is ' || size || ' GiB.' as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_ecs_disk;
-  EOT
+  EOQ
 
   param "ecs_disk_max_size_gb" {
     description = "The maximum size in GB allowed for disks."
@@ -130,7 +130,7 @@ control "ecs_disk_unattached" {
   description = "Unattached disks are charged by Alicloud, they should be removed unless there is a business need to retain them."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       arn as resource,
       case
@@ -140,12 +140,12 @@ control "ecs_disk_unattached" {
       case
         when status = 'Available' then title || ' has no attachment.'
         else title || ' has attachment.'
-      end as reason,
-      region,
-      account_id
+      end as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_ecs_disk;
-  EOT
+  EOQ
 
   tags = merge(local.ecs_common_tags, {
     class = "unused"
@@ -157,7 +157,7 @@ control "ecs_instance_large" {
   description = "Large ECS instances are unusual, expensive and should be reviewed."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       arn as resource,
       case
@@ -165,12 +165,12 @@ control "ecs_instance_large" {
         when instance_type like any ($1) then 'ok'
         else 'alarm'
       end as status,
-      title || ' has type ' || instance_type || ' and is ' || status || '.' as reason,
-      region,
-      account_id
+      title || ' has type ' || instance_type || ' and is ' || status || '.' as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_ecs_instance;
-  EOT
+  EOQ
 
   param "ecs_instance_allowed_types" {
     description = "A list of allowed instance types. PostgreSQL wildcards are supported."
@@ -187,21 +187,21 @@ control "ecs_instance_long_running" {
   description = "Instances should ideally be ephemeral and rehydrated frequently. Check why these instances have been running for so long."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       arn as resource,
       case
         when date_part('day', now() - creation_time) > $1 then 'alarm'
         else 'ok'
       end as status,
-      title || ' has been running ' || date_part('day', now() - creation_time) || ' days.' as reason,
-      region,
-      account_id
+      title || ' has been running ' || date_part('day', now() - creation_time) || ' days.' as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_ecs_instance
     where
       status = 'Running';
-  EOT
+  EOQ
 
   param "ecs_running_instance_age_max_days" {
     description = "The maximum number of days an instance are allowed to run."
@@ -218,20 +218,20 @@ control "ecs_snapshot_max_age" {
   description = "Old snapshots are likely unneeded and costly to maintain."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       'acs:acs:' || region || ':' || account_id || ':' || 'snapshot/' || snapshot_id as resource,
       case
-        when creation_time > current_timestamp - interval '${var.ecs_snapshot_age_max_days} days' then 'ok'
+        when date_part('day', now() - creation_time) < $1 then 'ok'
         else 'alarm'
       end as status,
       snapshot_id || ' created at ' || creation_time || ' (' || date_part('day', now() - creation_time) || ' days).'
-      as reason,
-      region,
-      account_id
+      as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_ecs_snapshot;
-  EOT
+  EOQ
 
   param "ecs_snapshot_age_max_days" {
     description = "The maximum number of days a snapshot can be retained."
@@ -248,7 +248,7 @@ control "ecs_disk_high_iops" {
   description = "High IOPS PL1, PL2 and PL3 disks are costly and their usage should be reviewed."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       arn as resource,
       case
@@ -259,12 +259,12 @@ control "ecs_disk_high_iops" {
       case
         when category <> 'cloud_essd' then title || ' is of type ' || category || '.'
         else title || ' with performance category ' || performance_level || ' has ' || iops || ' iops.'
-      end as reason,
-      region,
-      account_id
+      end as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_ecs_disk;
-  EOT
+  EOQ
 
   param "ecs_disk_max_iops" {
     description = "The maximum IOPS allowed for disks."
@@ -281,7 +281,7 @@ control "ecs_instance_with_low_utilization" {
   description = "Resize or eliminate underutilized instances."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     with ec2_instance_utilization as (
       select
         instance_id,
@@ -305,13 +305,13 @@ control "ecs_instance_with_low_utilization" {
       case
         when avg_max is null then 'Cloud monitor metrics not available for ' || title || '.'
         else title || ' is averaging ' || avg_max || '% max utilization over the last ' || days || ' days.'
-      end as reason,
-      region,
-      account_id
+      end as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_ecs_instance as i
       left join ec2_instance_utilization as u on u.instance_id = i.instance_id;
-  EOT
+  EOQ
 
   param "ecs_instance_avg_cpu_utilization_low" {
     description = "The average CPU utilization required for instances to be considered infrequently used. This value should be lower than ecs_instance_avg_cpu_utilization_high."

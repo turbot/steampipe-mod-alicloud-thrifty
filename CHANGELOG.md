@@ -1,3 +1,10 @@
+## v0.7 [2023-02-10]
+
+_What's new?_
+
+- Added `tags` as dimensions to group and filter findings. (see [var.tag_dimensions](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/variables)) ([#34](https://github.com/turbot/steampipe-mod-alicloud-thrifty/pull/34))
+- Added `connection_name` in the common dimensions to group and filter findings. (see [var.common_dimensions](https://hub.steampipe.io/mods/turbot/alicloud_thrifty/variables)) ([#34](https://github.com/turbot/steampipe-mod-alicloud-thrifty/pull/34))
+
 ## v0.6 [2022-05-09]
 
 _Enhancements_

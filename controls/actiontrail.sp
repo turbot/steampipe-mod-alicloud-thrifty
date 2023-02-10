@@ -23,7 +23,7 @@ control "actiontrail_multiple_global_trails" {
   description = "Your ActionTrail trails in each account are charged based on the billing policies of an Object Storage Service (OSS) bucket or a Log Service Logstore."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     with global_trails as (
       select
         count(*) as total
@@ -42,16 +42,15 @@ control "actiontrail_multiple_global_trails" {
       case
         when total > 1 then name || ' is one of ' || total || ' global trails.'
         else name || ' is the only global trail.'
-      end as reason,
-      region,
-      account_id
+      end as reason
+      ${local.common_dimensions_sql}
     from
       alicloud_action_trail,
       global_trails
     where
       trail_region = 'All'
       and status = 'Enable';
-  EOT
+  EOQ
 
   tags = merge(local.actiontrail_common_tags, {
     class = "managed"
@@ -63,7 +62,7 @@ control "actiontrail_multiple_regional_trails" {
   description   = "Your actiontrail in each region is charged based on the billing policies of an Object Storage Service (OSS) bucket or a Log Service Logstore."
   severity      = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     with
       global_trails as (
         select
@@ -109,9 +108,8 @@ control "actiontrail_multiple_regional_trails" {
           when org_trails.total > 0 then name || ' is redundant to a organizational trail.'
           when regional_trails.total > 1 then name || ' is one of ' || regional_trails.total || ' trails in ' || t.region || '.'
           else name || ' is the only regional trail.'
-        end as reason,
-        t.region,
-        account_id
+        end as reason
+      ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "t.")}
       from
         alicloud_action_trail as t,
         global_trails,
@@ -122,7 +120,7 @@ control "actiontrail_multiple_regional_trails" {
         and regional_trails.region = t.region
         and not trail_region = 'All'
         and not is_organization_trail;
-  EOT
+  EOQ
 
   tags = merge(local.actiontrail_common_tags, {
     class = "managed"

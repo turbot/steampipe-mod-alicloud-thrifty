@@ -23,7 +23,7 @@ control "vpc_eip_unattached" {
   description = "Unattached external IPs cost money and should be released."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       'acs:vpc:' || region || ':' || account_id || ':' || 'eip/' || allocation_id as resource,
       case
@@ -33,12 +33,11 @@ control "vpc_eip_unattached" {
       case
         when status = 'Available' then ip_address || ' not attached.'
         else ip_address || ' is attached.'
-      end as reason,
-      region,
-      account_id
+      end as reason
+      ${local.common_dimensions_sql}
     from
       alicloud_vpc_eip;
-  EOT
+  EOQ
 
   tags = merge(local.vpc_common_tags, {
     class = "unused"
@@ -50,7 +49,7 @@ control "vpc_nat_gateway_unused" {
   description = "NAT gateways are charged on an hourly basis once provisioned and available. Unused NAT gateways should be deleted if not used."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     with instance_data as (
       select
         instance_id,
@@ -73,14 +72,13 @@ control "vpc_nat_gateway_unused" {
         when i.vswitch_id is null then nat.title || ' not in-use.'
         when i.status <> 'Running' then nat.title || ' associated with ' || i.instance_id || ', which is in ' || lower(i.status) || ' state.'
         else nat.title || ' in-use.'
-      end as reason,
+      end as reason
       -- Additional Dimensions
-      nat.region,
-      nat.account_id
+      ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "nat.")}
     from
       alicloud_vpc_nat_gateway as nat
       left join instance_data as i on nat_gateway_private_info ->> 'VswitchId' = i.vswitch_id;
-  EOT
+  EOQ
 
   tags = merge(local.vpc_common_tags, {
     class = "unused"

@@ -41,7 +41,7 @@ control "rds_db_instance_long_running" {
   description = "Subscription billing for long running RDS DB instances is more cost effective and you can receive larger discounts for longer subscription periods."
   severity    = "low"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     select
       arn as resource,
       case
@@ -49,14 +49,14 @@ control "rds_db_instance_long_running" {
         when date_part('day', now() - creation_time) > $2 then 'info'
         else 'ok'
       end as status,
-      title || ' has been in use for ' || date_part('day', now() - creation_time) || ' days.' as reason,
-      region,
-      account_id
+      title || ' has been in use for ' || date_part('day', now() - creation_time) || ' days.' as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_rds_instance
     where
       pay_type = 'Postpaid';
-  EOT
+  EOQ
 
   param "rds_db_instance_age_max_days" {
     description = "The maximum number of days DB instances can be running."
@@ -78,7 +78,7 @@ control "rds_db_instance_low_connection_count" {
   description = "These databases have had very little usage in the last 30 days and should be shut down when not in use."
   severity    = "high"
 
-  sql = <<-EOT
+  sql = <<-EOQ
     with rds_db_usage as (
       select
         db_instance_id,
@@ -103,13 +103,13 @@ control "rds_db_instance_low_connection_count" {
         when avg_max is null then 'Cloud monitor metrics not available for ' || title || '.'
         when avg_max = 0 then title || ' has not been connected to in the last ' || days || ' days.'
         else title || ' is averaging ' || avg_max || ' max connections/day in the last ' || days || ' days.'
-      end as reason,
-      region,
-      account_id
+      end as reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       alicloud_rds_instance as i
       left join rds_db_usage as u on u.db_instance_id = i.db_instance_id;
-  EOT
+  EOQ
 
   param "rds_db_instance_avg_connections" {
     description = "The minimum number of average connections per day required for DB instances to be considered in-use."
