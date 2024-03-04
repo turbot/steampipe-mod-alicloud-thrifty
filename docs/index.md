@@ -6,17 +6,9 @@ repository: "https://github.com/turbot/steampipe-mod-alicloud-thrifty"
 
 Be Thrifty on Alibaba Cloud! This mod checks for unused resources and opportunities to optimize your spend on Alibaba Cloud.
 
-<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/main/docs/alicloud_thrifty_dashboard.png" width="50%" type="thumbnail"/>
-<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/main/docs/alicloud_thrifty_ecs_dashboard.png" width="50%" type="thumbnail"/>
-<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/main/docs/alicloud_thrifty_console.png" width="50%" type="thumbnail"/>
-
-## References
-
-[Alibaba Cloud](https://in.alibabacloud.com/) provides on-demand cloud computing platforms and APIs to authenticated customers on a metered pay-as-you-go basis or as subscription.
-
-[Steampipe](https://steampipe.io) is an open source CLI to instantly query cloud APIs using SQL.
-
-[Steampipe Mods](https://steampipe.io/docs/reference/mod-resources#mod) are collections of `named queries`, and codified `controls` that can be used to test current configuration of your cloud resources against a desired configuration.
+<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/add-new-checks/docs/alicloud_thrifty_dashboard.png" width="50%" type="thumbnail"/>
+<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/add-new-checks/docs/alicloud_thrifty_ecs_dashboard.png" width="50%" type="thumbnail"/>
+<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/add-new-checks/docs/alicloud_thrifty_console.png" width="50%" type="thumbnail"/>
 
 ## Documentation
 
@@ -26,113 +18,246 @@ Be Thrifty on Alibaba Cloud! This mod checks for unused resources and opportunit
 
 ### Installation
 
-Download and install Steampipe (https://steampipe.io/downloads). Or use Brew:
+Install Powerpipe (https://powerpipe.io/downloads), or use Brew:
 
 ```sh
-brew tap turbot/tap
-brew install steampipe
+brew install turbot/tap/powerpipe
 ```
 
-Install the alicloud plugin with [Steampipe](https://steampipe.io):
+This mod also requires [Steampipe](https://steampipe.io) with the [Alicloud plugin](https://hub.steampipe.io/plugins/turbot/alicloud) as the data source. Install Steampipe (https://steampipe.io/downloads), or use Brew:
 
 ```sh
+brew install turbot/tap/steampipe
 steampipe plugin install alicloud
 ```
 
-Clone:
+Steampipe will automatically use your default Alicloud credentials. Optionally, you can [setup multiple accounts](https://hub.steampipe.io/plugins/turbot/alicloud#multi-account-connections) or [customize Alicloud credentials](https://hub.steampipe.io/plugins/turbot/alicloud#configuring-alicloud-credentials).
+
+Finally, install the mod:
 
 ```sh
-git clone https://github.com/turbot/steampipe-mod-alicloud-thrifty.git
-cd steampipe-mod-alicloud-thrifty
+mkdir dashboards
+cd dashboards
+powerpipe mod init
+powerpipe mod install github.com/turbot/powerpipe-mod-alicloud-thrifty
 ```
 
-### Usage
+### Browsing Dashboards
 
-Start your dashboard server to get started:
+Start Steampipe as the data source:
 
 ```sh
-steampipe dashboard
+steampipe service start
 ```
 
-By default, the dashboard interface will then be launched in a new browser
-window at https://localhost:9194. From here, you can run benchmarks by
-selecting one or searching for a specific one.
+Start the dashboard server:
+
+```sh
+powerpipe server
+```
+
+Browse and view your dashboards at **http://localhost:9033**.
+
+### Running Checks in Your Terminal
 
 Instead of running benchmarks in a dashboard, you can also run them within your
-terminal with the `steampipe check` command:
+terminal with the `powerpipe benchmark` command:
 
-Run all benchmarks:
+List available benchmarks:
 
 ```sh
-steampipe check all
+powerpipe benchmark list
 ```
 
-Run a single benchmark:
+Run a benchmark:
 
 ```sh
-steampipe check benchmark.ecs
-```
-
-Run a specific control:
-
-```sh
-steampipe check control.ecs_disk_high_iops
+powerpipe benchmark run alicloud_thrifty.benchmark.ecs
 ```
 
 Different output formats are also available, for more information please see
-[Output Formats](https://steampipe.io/docs/reference/cli/check#output-formats).
-
-### Credentials
-
-This mod uses the credentials configured in the [Steampipe Alicloud plugin](https://hub.steampipe.io/plugins/turbot/alicloud).
+[Output Formats](https://powerpipe.io/docs/reference/cli/benchmark#output-formats).
 
 ### Configuration
 
-Several benchmarks have [input variables](https://steampipe.io/docs/using-steampipe/mod-variables) that can be configured to better match your environment and requirements. Each variable has a default defined in its source file, e.g., `controls/ecs.sp`, but these can be overwritten in several ways:
+Several benchmarks have [input variables](https://steampipe.io/docs/using-steampipe/mod-variables) that can be configured to better match your environment and requirements. Each variable has a default defined in its source file, e.g., `controls/sql.sp`, but these can be overwritten in several ways:
 
-- Copy and rename the `steampipe.spvars.example` file to `steampipe.spvars`, and then modify the variable values inside that file
-- Pass in a value on the command line:
+It's easiest to setup your vars file, starting with the sample:
 
-  ```sh
-  steampipe check benchmark.ecs --var=ecs_disk_max_size_gb=100
-  ```
+```sh
+cp powerpipe.ppvar.example powerpipe.ppvars
+vi powerpipe.ppvars
+```
 
-- Set an environment variable:
+Alternatively you can pass variables on the command line:
 
-  ```sh
-  SP_VAR_ecs_disk_max_size_gb=100 steampipe check control.ecs_disk_large
-  ```
+```sh
+powerpipe benchmark run alicloud_thrifty.ecs --var=ecs_disk_max_size_gb=100
+```
 
-  - Note: When using environment variables, if the variable is defined in `steampipe.spvars` or passed in through the command line, either of those will take precedence over the environment variable value. For more information on variable definition precedence, please see the link below.
+Or through environment variables:
 
-These are only some of the ways you can set variables. For a full list, please see [Passing Input Variables](https://steampipe.io/docs/using-steampipe/mod-variables#passing-input-variables).
+```sh
+export PP_VAR_ecs_disk_max_size_gb=100
+powerpipe benchmark run alicloud_thrifty.benchmark.ecs
+```
+
+These are only some of the ways you can set variables. For a full list, please see [Passing Input Variables](https://powerpipe.io/docs/using-steampipe/mod-variables#passing-input-variables).
 
 ### Common and Tag Dimensions
 
 The benchmark queries use common properties (like `account_id`, `connection_name` and `region`) and tags that are defined in the form of a default list of strings in the `mod.sp` file. These properties can be overwritten in several ways:
 
-- Copy and rename the `steampipe.spvars.example` file to `steampipe.spvars`, and then modify the variable values inside that file
-- Pass in a value on the command line:
+It's easiest to setup your vars file, starting with the sample:
 
-  ```shell
-  steampipe check benchmark.ecs --var 'common_dimensions=["account_id", "connection_name", "region"]'
-  ```
+```sh
+cp powerpipe.ppvar.example powerpipe.ppvars
+vi powerpipe.ppvars
+```
 
-  ```shell
-  steampipe check benchmark.ecs --var 'tag_dimensions=["Environment", "Owner"]'
-  ```
+Alternatively you can pass variables on the command line:
 
-- Set an environment variable:
+```sh
+powerpipe benchmark run alicloud_thrifty.benchmark.compute --var 'tag_dimensions=["Environment", "Owner"]'
+```
 
-  ```shell
-  SP_VAR_common_dimensions='["account_id", "connection_name", "region"]' steampipe check control.ecs_disk_large
-  ```
+Or through environment variables:
 
-  ```shell
-  SP_VAR_tag_dimensions='["Environment", "Owner"]' steampipe check control.ecs_disk_large
-  ```
+```sh
+export PP_VAR_common_dimensions='["account_id", "connection_name", "region"]' 
+export PP_VAR_tag_dimensions='["Environment", "Owner"]'
+powerpipe benchmark run alicloud_thrifty.benchmark.ecs
+```
 
-## Contributing
+## Open Source & Contributing
+
+If you have an idea for additional controls or just want to help maintain and extend this mod ([or others](https://github.com/topics/steampipe-mod)) we would love you to join the community and start contributing.
+
+- **[Join #steampipe on Slack →](https://turbot.com/community/join)** and hang out with other Mod developers.
+
+Please see the [contribution guidelines](https://github.com/turbot/steampipe/blob/main/CONTRIBUTING.md) and our [code of conduct](https://github.com/turbot/steampipe/blob/main/CODE_OF_CONDUCT.md). All contributions are subject to the [Apache 2.0 open source license](https://github.com/turbot/steampipe-mod-alicloud-thrifty/blob/main/LICENSE).
+
+Want to help but not sure where to start? Pick up one of the `help wanted` issues:
+
+- [Steampipe](https://github.com/turbot/steampipe/labels/help%20wanted)
+- [Alibaba Cloud Thrifty Mod](https://github.com/turbot/steampipe-mod-alicloud-thrifty/labels/help%20wanted)
+
+## Getting started
+
+### Installation
+
+Install Powerpipe (https://powerpipe.io/downloads), or use Brew:
+
+```sh
+brew install turbot/tap/powerpipe
+```
+
+This mod also requires [Steampipe](https://steampipe.io) with the [Alicloud plugin](https://hub.steampipe.io/plugins/turbot/alicloud) as the data source. Install Steampipe (https://steampipe.io/downloads), or use Brew:
+
+```sh
+brew install turbot/tap/steampipe
+steampipe plugin install alicloud
+```
+
+Steampipe will automatically use your default Alicloud credentials. Optionally, you can [setup multiple accounts](https://hub.steampipe.io/plugins/turbot/alicloud#multi-account-connections) or [customize Alicloud credentials](https://hub.steampipe.io/plugins/turbot/alicloud#configuring-alicloud-credentials).
+
+Finally, install the mod:
+
+```sh
+mkdir dashboards
+cd dashboards
+powerpipe mod init
+powerpipe mod install github.com/turbot/powerpipe-mod-alicloud-thrifty
+```
+
+### Browsing Dashboards
+
+Start Steampipe as the data source:
+
+```sh
+steampipe service start
+```
+
+Start the dashboard server:
+
+```sh
+powerpipe server
+```
+
+Browse and view your dashboards at **http://localhost:9033**.
+
+### Running Checks in Your Terminal
+
+Instead of running benchmarks in a dashboard, you can also run them within your
+terminal with the `powerpipe benchmark` command:
+
+List available benchmarks:
+
+```sh
+powerpipe benchmark list
+```
+
+Run a benchmark:
+
+```sh
+powerpipe benchmark run alicloud_thrifty.benchmark.ecs
+```
+
+Different output formats are also available, for more information please see
+[Output Formats](https://powerpipe.io/docs/reference/cli/benchmark#output-formats).
+
+### Configuration
+
+Several benchmarks have [input variables](https://steampipe.io/docs/using-steampipe/mod-variables) that can be configured to better match your environment and requirements. Each variable has a default defined in its source file, e.g., `controls/sql.sp`, but these can be overwritten in several ways:
+
+It's easiest to setup your vars file, starting with the sample:
+
+```sh
+cp powerpipe.ppvar.example powerpipe.ppvars
+vi powerpipe.ppvars
+```
+
+Alternatively you can pass variables on the command line:
+
+```sh
+powerpipe benchmark run alicloud_thrifty.benchmark.ecs --var=ecs_disk_max_size_gb=100
+```
+
+Or through environment variables:
+
+```sh
+export PP_VAR_ecs_disk_max_size_gb=100
+powerpipe benchmark run alicloud_thrifty.benchmark.ecs
+```
+
+These are only some of the ways you can set variables. For a full list, please see [Passing Input Variables](https://powerpipe.io/docs/using-steampipe/mod-variables#passing-input-variables).
+
+### Common and Tag Dimensions
+
+The benchmark queries use common properties (like `account_id`, `connection_name` and `region`) and tags that are defined in the form of a default list of strings in the `mod.sp` file. These properties can be overwritten in several ways:
+
+It's easiest to setup your vars file, starting with the sample:
+
+```sh
+cp powerpipe.ppvar.example powerpipe.ppvars
+vi powerpipe.ppvars
+```
+
+Alternatively you can pass variables on the command line:
+
+```sh
+powerpipe benchmark run alicloud_thrifty.benchmark.compute --var 'tag_dimensions=["Environment", "Owner"]'
+```
+
+Or through environment variables:
+
+```sh
+export PP_VAR_common_dimensions='["account_id", "connection_name", "region"]' 
+export PP_VAR_tag_dimensions='["Environment", "Owner"]'
+powerpipe benchmark run alicloud_thrifty.benchmark.ecs
+```
+
+## Open Source & Contributing
 
 If you have an idea for additional controls or just want to help maintain and extend this mod ([or others](https://github.com/topics/steampipe-mod)) we would love you to join the community and start contributing.
 
