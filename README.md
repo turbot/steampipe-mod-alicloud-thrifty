@@ -1,6 +1,6 @@
 # Alibaba Cloud Thrifty Mod for Powerpipe
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > [Powerpipe](https://powerpipe.io) is now the preferred way to run this mod! [Migrating from Steampipe →](https://powerpipe.io/blog/migrating-from-steampipe)
 >
 > All v0.x versions of this mod will work in both Steampipe and Powerpipe, but v1.0.0 onwards will be in Powerpipe format only.
@@ -25,7 +25,12 @@ Includes checks for:
 - Unused **VPC NAT Gateways**
 - [#TODO List](https://github.com/turbot/steampipe-mod-alicloud-thrifty/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
 
-## Getting started
+## Documentation
+
+- **[Benchmarks and controls →](https://hub.powerpipe.io/mods/turbot/alicloud_thrifty/controls)**
+- **[Named queries →](https://hub.powerpipe.io/mods/turbot/alicloud_thrifty/queries)**
+
+## Getting Started
 
 ### Installation
 
@@ -89,15 +94,15 @@ powerpipe benchmark run alicloud_thrifty.benchmark.ecs
 Different output formats are also available, for more information please see
 [Output Formats](https://powerpipe.io/docs/reference/cli/benchmark#output-formats).
 
-### Configuration
+### Configure Variables
 
-Several benchmarks have [input variables](https://steampipe.io/docs/using-steampipe/mod-variables) that can be configured to better match your environment and requirements. Each variable has a default defined in its source file, e.g., `controls/sql.sp`, but these can be overwritten in several ways:
+Several benchmarks have [input variables](https://powerpipe.io/docs/build/mod-variables#input-variables) that can be configured to better match your environment and requirements. Each variable has a default defined in its source file, e.g., `controls/sql.sp`, but these can be overwritten in several ways:
 
 It's easiest to setup your vars file, starting with the sample:
 
 ```sh
-cp powerpipe.ppvar.example powerpipe.ppvars
-vi powerpipe.ppvars
+cp steampipe.spvars.example steampipe.spvars
+vi steampipe.spvars
 ```
 
 Alternatively you can pass variables on the command line:
@@ -113,7 +118,7 @@ export PP_VAR_ecs_disk_max_size_gb=100
 powerpipe benchmark run alicloud_thrifty.benchmark.ecs
 ```
 
-These are only some of the ways you can set variables. For a full list, please see [Passing Input Variables](https://powerpipe.io/docs/using-steampipe/mod-variables#passing-input-variables).
+These are only some of the ways you can set variables. For a full list, please see [Passing Input Variables](https://powerpipe.io/docs/build/mod-variables#passing-input-variables).
 
 ### Common and Tag Dimensions
 
