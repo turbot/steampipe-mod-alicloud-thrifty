@@ -1,7 +1,3 @@
----
-repository: "https://github.com/turbot/steampipe-mod-alicloud-thrifty"
----
-
 # Alibaba Cloud Thrifty Mod
 
 Be Thrifty on Alibaba Cloud! This mod checks for unused resources and opportunities to optimize your spend on Alibaba Cloud.
@@ -270,5 +266,5 @@ This repository is published under the [Apache 2.0 license](https://www.apache.o
 
 Want to help but don't know where to start? Pick up one of the `help wanted` issues:
 
-- [Steampipe](https://github.com/turbot/steampipe/labels/help%20wanted)
+- [Powerpipe](https://github.com/turbot/powerpipe/labels/help%20wanted)
 - [Alibaba Cloud Thrifty Mod](https://github.com/turbot/steampipe-mod-alicloud-thrifty/labels/help%20wanted)
