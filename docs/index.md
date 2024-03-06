@@ -28,7 +28,7 @@ brew install turbot/tap/steampipe
 steampipe plugin install alicloud
 ```
 
-Steampipe will automatically use your default Alicloud credentials. Optionally, you can [setup multiple accounts](https://hub.steampipe.io/plugins/turbot/alicloud#multi-account-connections) or [customize Alicloud credentials](https://hub.steampipe.io/plugins/turbot/alicloud#configuring-alicloud-credentials).
+Steampipe will automatically use your default Alicloud credentials. Optionally, you can [setup multiple accounts](https://hub.steampipe.io/plugins/turbot/alicloud#multi-account-connections).
 
 Finally, install the mod:
 
@@ -36,7 +36,7 @@ Finally, install the mod:
 mkdir dashboards
 cd dashboards
 powerpipe mod init
-powerpipe mod install github.com/turbot/powerpipe-mod-alicloud-thrifty
+powerpipe mod install github.com/turbot/steampipe-mod-alicloud-thrifty
 ```
 
 ### Browsing Dashboards
@@ -108,20 +108,20 @@ The benchmark queries use common properties (like `account_id`, `connection_name
 It's easiest to setup your vars file, starting with the sample:
 
 ```sh
-cp powerpipe.ppvar.example powerpipe.ppvars
-vi powerpipe.ppvars
+cp steampipe.spvars.example steampipe.spvars
+vi steampipe.spvars
 ```
 
 Alternatively you can pass variables on the command line:
 
 ```sh
-powerpipe benchmark run alicloud_thrifty.benchmark.compute --var 'tag_dimensions=["Environment", "Owner"]'
+powerpipe benchmark run alicloud_thrifty.benchmark.oss --var 'tag_dimensions=["Environment", "Owner"]'
 ```
 
 Or through environment variables:
 
 ```sh
-export PP_VAR_common_dimensions='["account_id", "connection_name", "region"]' 
+export PP_VAR_common_dimensions='["account_id", "connection_name", "region"]'
 export PP_VAR_tag_dimensions='["Environment", "Owner"]'
 powerpipe benchmark run alicloud_thrifty.benchmark.ecs
 ```
