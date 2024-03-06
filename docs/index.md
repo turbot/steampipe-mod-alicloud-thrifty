@@ -77,7 +77,7 @@ Different output formats are also available, for more information please see
 
 ### Configure Variables
 
-Several benchmarks have [input variables](https://powerpipe.io/docs/build/mod-variables#input-variables) that can be configured to better match your environment and requirements. Each variable has a default defined in its source file, e.g., `controls/sql.sp`, but these can be overwritten in several ways:
+Several benchmarks have [input variables](https://powerpipe.io/docs/build/mod-variables#input-variables) that can be configured to better match your environment and requirements. Each variable has a default defined in its source file, e.g., `controls/ecs.sp.sp`, but these can be overwritten in several ways:
 
 It's easiest to setup your vars file, starting with the sample:
 
