@@ -6,9 +6,9 @@ repository: "https://github.com/turbot/steampipe-mod-alicloud-thrifty"
 
 Be Thrifty on Alibaba Cloud! This mod checks for unused resources and opportunities to optimize your spend on Alibaba Cloud.
 
-<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/add-new-checks/docs/alicloud_thrifty_dashboard.png" width="50%" type="thumbnail"/>
-<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/add-new-checks/docs/alicloud_thrifty_ecs_dashboard.png" width="50%" type="thumbnail"/>
-<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/add-new-checks/docs/alicloud_thrifty_console.png" width="50%" type="thumbnail"/>
+<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/main/docs/alicloud_thrifty_dashboard.png" width="50%" type="thumbnail"/>
+<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/main/docs/alicloud_thrifty_ecs_dashboard.png" width="50%" type="thumbnail"/>
+<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/main/docs/alicloud_thrifty_console.png" width="50%" type="thumbnail"/>
 
 ## Documentation
 

@@ -9,11 +9,11 @@ An Alibaba Cloud cost savings and waste checking tool.
 
 Run checks in a dashboard:
 
-![image](https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/add-new-checks/docs/alicloud_thrifty_dashboard.png)
+![image](https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/main/docs/alicloud_thrifty_dashboard.png)
 
 Or in a terminal:
 
-![image](https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/add-new-checks/docs/alicloud_thrifty_terminal.png)
+![image](https://raw.githubusercontent.com/turbot/steampipe-mod-alicloud-thrifty/main/docs/alicloud_thrifty_terminal.png)
 
 Includes checks for:
 
